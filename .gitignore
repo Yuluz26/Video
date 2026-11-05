@@ -3,3 +3,10 @@ dist
 out
 .DS_Store
 .env
+
+# DIDIK promo: recordings, processed clips, generated audio and rendered films are large and can be rebuilt
+didik-promo/recordings/raw/
+didik-promo/recordings/processed
+didik-promo/public/clips/
+didik-promo/public/audio/
+didik-promo/output/*.mp4

@@ -14,12 +14,19 @@
     "ffmpeg": "remotion ffmpeg",
     "ffprobe": "remotion ffprobe",
     "upgrade": "remotion upgrade",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "didik:studio": "remotion studio didik-promo/remotion/index.ts --public-dir=didik-promo/public",
+    "didik:promo": "remotion render didik-promo/remotion/index.ts DIDIK-Promo-9x16 didik-promo/output/DIDIK_Promo_TikTok_9x16_60s.mp4 --public-dir=didik-promo/public --codec=h264 --audio-codec=aac --crf=18",
+    "didik:promo-landscape": "remotion render didik-promo/remotion/index.ts DIDIK-Promo-16x9 didik-promo/output/DIDIK_Promo_Landscape_16x9.mp4 --public-dir=didik-promo/public --codec=h264 --audio-codec=aac --crf=18",
+    "didik:demo": "remotion render didik-promo/remotion/index.ts DIDIK-Demo-16x9 didik-promo/output/DIDIK_Full_Features_Demo_1080p.mp4 --public-dir=didik-promo/public --codec=h264 --audio-codec=aac --crf=18",
+    "didik:cover": "remotion still didik-promo/remotion/index.ts DIDIK-Cover-9x16 didik-promo/output/DIDIK_Promo_Cover_9x16.png --public-dir=didik-promo/public"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.541",
     "@remotion/cli": "4.0.541",
+    "@remotion/fonts": "4.0.541",
     "@remotion/renderer": "4.0.541",
+    "@remotion/transitions": "4.0.541",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "remotion": "4.0.541",

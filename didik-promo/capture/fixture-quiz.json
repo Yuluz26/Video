@@ -1,0 +1,24 @@
+{
+  "title": "Haiwan Kita",
+  "description": "Kuiz rakaman demo: haiwan, buah dan benda di sekeliling kita.",
+  "questions": [
+    {"type": "single", "prompt": "Haiwan manakah yang mempunyai belalai?", "picture": "gajah", "explain": "Gajah menggunakan belalainya untuk bernafas, menghidu dan mengambil makanan.", "time_limit": 20,
+     "choices": [{"text": "Gajah", "correct": true, "sticker": "gajah"}, {"text": "Harimau", "sticker": "harimau"}, {"text": "Penyu", "sticker": "penyu"}, {"text": "Monyet", "sticker": "monyet"}]},
+    {"type": "truefalse", "prompt": "Penyu bertelur di pantai.", "picture": "penyu", "explain": "Penyu betina naik ke pantai pada waktu malam untuk bertelur di dalam pasir.", "time_limit": 15, "answer": true},
+    {"type": "single", "prompt": "Buah manakah berwarna kuning dan panjang?", "picture": "pisang", "explain": "Pisang masak berwarna kuning dan bentuknya panjang melengkung.", "time_limit": 20,
+     "choices": [{"text": "Pisang", "correct": true, "sticker": "pisang"}, {"text": "Epal", "sticker": "epal"}, {"text": "Anggur", "sticker": "anggur"}, {"text": "Tembikai", "sticker": "tembikai"}]},
+    {"type": "truefalse", "prompt": "Ikan boleh bernafas di dalam air.", "picture": "ikan", "explain": "Ikan bernafas dengan insang yang mengambil oksigen daripada air.", "time_limit": 15, "answer": true},
+    {"type": "single", "prompt": "Haiwan manakah yang boleh terbang?", "picture": "burung", "explain": "Burung mempunyai sayap dan bulu pelepah untuk terbang.", "time_limit": 20,
+     "choices": [{"text": "Burung", "correct": true, "sticker": "burung"}, {"text": "Kucing", "sticker": "kucing"}, {"text": "Arnab", "sticker": "arnab"}, {"text": "Katak", "sticker": "katak"}]},
+    {"type": "truefalse", "prompt": "Kucing mempunyai enam kaki.", "picture": "kucing", "explain": "Kucing mempunyai empat kaki. Serangga seperti semut yang mempunyai enam kaki.", "time_limit": 15, "answer": false},
+    {"type": "single", "prompt": "Apakah yang kita guna semasa hujan?", "picture": "hujan", "explain": "Payung melindungi kita daripada titisan hujan.", "time_limit": 20,
+     "choices": [{"text": "Payung", "correct": true, "sticker": "payung"}, {"text": "Bola", "sticker": "bola"}, {"text": "Kasut", "sticker": "kasut"}, {"text": "Topi", "sticker": "topi"}]},
+    {"type": "truefalse", "prompt": "Lebah menghasilkan madu.", "picture": "lebah", "explain": "Lebah mengumpul nektar bunga dan menukarnya menjadi madu di dalam sarang.", "time_limit": 15, "answer": true},
+    {"type": "single", "prompt": "Berapakah kaki seekor ayam?", "picture": "ayam", "explain": "Ayam ialah burung, jadi ia mempunyai dua kaki dan dua sayap.", "time_limit": 20,
+     "choices": [{"text": "2", "correct": true}, {"text": "4"}, {"text": "6"}, {"text": "8"}]},
+    {"type": "truefalse", "prompt": "Matahari terbit pada waktu malam.", "picture": "matahari", "explain": "Matahari terbit pada waktu pagi dan terbenam pada waktu senja.", "time_limit": 15, "answer": false},
+    {"type": "single", "prompt": "Kenderaan manakah yang terbang di langit?", "picture": "kapal-terbang", "explain": "Kapal terbang mempunyai sayap dan enjin untuk terbang di langit.", "time_limit": 20,
+     "choices": [{"text": "Kapal terbang", "correct": true, "sticker": "kapal-terbang"}, {"text": "Bas", "sticker": "bas"}, {"text": "Basikal", "sticker": "basikal"}, {"text": "Kereta api", "sticker": "kereta-api"}]},
+    {"type": "truefalse", "prompt": "Pelangi mempunyai banyak warna.", "picture": "pelangi", "explain": "Pelangi muncul bila cahaya matahari melalui titisan air dan terpecah kepada banyak warna.", "time_limit": 15, "answer": true}
+  ]
+}

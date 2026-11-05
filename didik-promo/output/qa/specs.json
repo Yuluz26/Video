@@ -1,0 +1,67 @@
+[
+  {
+    "file": "DIDIK_Full_Features_Demo_1080p.mp4",
+    "bytes": 132106424,
+    "duration": 336.0,
+    "container": "mov,mp4,m4a,3gp,3g2,mj2",
+    "video": "h264 (High)",
+    "resolution": "1920x1080",
+    "fps": 30.0,
+    "frames": 10080,
+    "audio": "aac 48000 Hz 2 ch",
+    "loudness": "-17.9 LUFS",
+    "black": [],
+    "frozen_over_2_5s_starts": [
+      1.56667,
+      30.5,
+      67.3667,
+      143.867,
+      199.2,
+      332.133
+    ],
+    "contact_sheet": "output/qa/DIDIK_Full_Features_Demo_1080p_contact.jpg",
+    "meets_spec": true
+  },
+  {
+    "file": "DIDIK_Promo_TikTok_9x16_60s.mp4",
+    "bytes": 28643272,
+    "duration": 60.1,
+    "container": "mov,mp4,m4a,3gp,3g2,mj2",
+    "video": "h264 (High)",
+    "resolution": "1080x1920",
+    "fps": 30.0,
+    "frames": 1800,
+    "audio": "aac 48000 Hz 2 ch",
+    "loudness": "-13.6 LUFS",
+    "black": [],
+    "frozen_over_2_5s_starts": [
+      56.3
+    ],
+    "contact_sheet": "output/qa/DIDIK_Promo_TikTok_9x16_60s_contact.jpg",
+    "meets_spec": true
+  },
+  {
+    "file": "DIDIK_Promo_Landscape_16x9.mp4",
+    "bytes": 25531604,
+    "duration": 60.1,
+    "container": "mov,mp4,m4a,3gp,3g2,mj2",
+    "video": "h264 (High)",
+    "resolution": "1920x1080",
+    "fps": 30.0,
+    "frames": 1800,
+    "audio": "aac 48000 Hz 2 ch",
+    "loudness": "-13.6 LUFS",
+    "black": [],
+    "frozen_over_2_5s_starts": [
+      45.0667,
+      56.1
+    ],
+    "contact_sheet": "output/qa/DIDIK_Promo_Landscape_16x9_contact.jpg",
+    "meets_spec": true
+  },
+  {
+    "file": "DIDIK_Promo_Cover_9x16.png",
+    "resolution": "1080x1920",
+    "bytes": 612445
+  }
+]
