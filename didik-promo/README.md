@@ -5,8 +5,8 @@ Two films made from real recordings of the DIDIK app running locally, edited in 
 | File | What | Spec |
 | --- | --- | --- |
 | `output/DIDIK_Full_Features_Demo_1080p.mp4` | full feature demo, chaptered | 1920×1080, 30 fps, H.264 + AAC |
-| `output/DIDIK_Promo_TikTok_9x16_60s.mp4` | 60 s promo for TikTok / Reels | 1080×1920, 30 fps, H.264 + AAC |
-| `output/DIDIK_Promo_Landscape_16x9.mp4` | the same promo recut for 16:9 | 1920×1080, 30 fps, H.264 + AAC |
+| `output/DIDIK_Promo_TikTok_9x16_60s.mp4` | 60 s promo for TikTok / Reels, the energetic motion-graphics cut | 1080×1920, 30 fps, H.264 + AAC |
+| `output/DIDIK_Promo_Landscape_16x9.mp4` | the calmer promo, recut for 16:9 | 1920×1080, 30 fps, H.264 + AAC |
 | `output/DIDIK_Promo_Cover_9x16.png` | cover / thumbnail | 1080×1920 |
 
 The MP4 films and the recordings are not committed (too large); rebuild them with the steps below. The cover
@@ -20,12 +20,18 @@ source footage, `QA_REPORT.md` has the checks on the final files, and `recording
 didik-promo/
   capture/        browser automation that records the running app (Playwright + Xvfb + ffmpeg x11grab)
   audio/          generate.py: the original score and DIDIK's UI sounds, synthesised
-  remotion/       the compositions: Promo (9:16), PromoLandscape (16:9), Demo, Cover
-    copy.ts       every promo caption (BM) in one place
-    clips.ts      which clip and from which frame each promo scene uses
+  remotion/       the compositions: PromoHype (the 9:16 promo), Promo (the calmer cut), PromoLandscape (16:9),
+                  Demo, Cover
+    motion.tsx    the motion toolkit: beat pulses, squash-and-stretch pops, sticker type, confetti, sparkles,
+                  parallax backgrounds, shake, flashes, sprite sheets, shape wipes, flying cards
+    hype-plan.ts  clips, the game montage and every sound effect (with its frame) for PromoHype
+    copy.ts       captions of the calmer cut
+    clips.ts      which clip and from which frame each scene of the calmer cut uses
     demo-plan.ts  the demo, shot by shot, with chapter and game text
-  public/         what Remotion serves: brand/ (logo and game badges rendered from the app), fonts/
-                  (Fredoka, Nunito, OFL), audio/, clips/ (processed recordings, not committed)
+  public/         what Remotion serves: brand/ (logo and game badges rendered from the app), chars/ (DIDIK's pixel
+                  characters and Didi, rendered from the app's art sheet), stickers/ (the app's Fluent Emoji
+                  stickers, MIT), fonts/ (Fredoka, Nunito, OFL), audio/, clips/ (processed recordings) and
+                  story/ (Legenda art copied from live/web/static/story); clips, audio and story are not committed
   recordings/     raw/ (takes, not committed), processed/ → ../public/clips, manifest.json
   output/         rendered films (not committed)
 ```
@@ -38,7 +44,18 @@ From the repository root:
 npm run didik:studio
 ```
 
-Remotion Studio opens with `DIDIK-Promo-9x16`, `DIDIK-Promo-16x9`, `DIDIK-Demo-16x9` and `DIDIK-Cover-9x16`.
+Remotion Studio opens with `DIDIK-Promo-9x16` (the energetic promo), `DIDIK-Promo-9x16-Calm`, `DIDIK-Promo-16x9`,
+`DIDIK-Demo-16x9` and `DIDIK-Cover-9x16`.
+
+Before the first preview, copy DIDIK's Legenda art into `public/story` (from the root of this repository, with
+the DIDIK repository checked out beside it):
+
+```bash
+cp -r ../didik/live/web/static/story didik-promo/public/story
+```
+
+- The energetic promo: scene timing is the `SCENES` table at the bottom of `remotion/PromoHype.tsx`; clips,
+  montage games and sound effects are in `remotion/hype-plan.ts`. Keep hits on multiples of 15 frames.
 
 - Captions: `remotion/copy.ts` (promo) and `remotion/demo-plan.ts` (demo titles and lines). Keep every claim in
   line with `FEATURE_AUDIT.md`.
@@ -66,7 +83,8 @@ If Remotion cannot download its own browser (as in a locked-down sandbox), add
 
 ## Re-record from scratch
 
-Needs the DIDIK repository, Python 3.11+, Node 22, Xvfb and ffmpeg.
+Needs the DIDIK repository, Python 3.11+, Node 22, Xvfb and ffmpeg. The characters (`public/chars`) come from
+`capture/characters.cjs`, which renders DIDIK's art sheet (`/gaya`) to transparent PNGs.
 
 1. Run DIDIK locally with a throwaway database (never production):
    ```bash
@@ -91,6 +109,9 @@ Needs the DIDIK repository, Python 3.11+, Node 22, Xvfb and ffmpeg.
    python process.py
    ```
 5. Audio (from `audio/`):
+   ```bash
+   python generate.py hype ../public/audio/music-hype.wav 60
+   ```
    ```bash
    python generate.py promo ../public/audio/music-promo.wav 60
    ```

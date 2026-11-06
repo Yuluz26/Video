@@ -24,7 +24,7 @@
   },
   {
     "file": "DIDIK_Promo_TikTok_9x16_60s.mp4",
-    "bytes": 28643272,
+    "bytes": 90582345,
     "duration": 60.1,
     "container": "mov,mp4,m4a,3gp,3g2,mj2",
     "video": "h264 (High)",
@@ -32,11 +32,9 @@
     "fps": 30.0,
     "frames": 1800,
     "audio": "aac 48000 Hz 2 ch",
-    "loudness": "-13.6 LUFS",
+    "loudness": "-13.8 LUFS",
     "black": [],
-    "frozen_over_2_5s_starts": [
-      56.3
-    ],
+    "frozen_over_2_5s_starts": [],
     "contact_sheet": "output/qa/DIDIK_Promo_TikTok_9x16_60s_contact.jpg",
     "meets_spec": true
   },

@@ -9,7 +9,7 @@ scene. Specs are in `output/qa/specs.json`.
 | File | Resolution | fps | Video | Audio | Duration | Frames | Size | Loudness | Spec |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `output/DIDIK_Full_Features_Demo_1080p.mp4` | 1920×1080 | 30 | H.264 High | AAC 48 kHz stereo | 5:36.0 | 10 080 | 132.1 MB | −17.9 LUFS | meets |
-| `output/DIDIK_Promo_TikTok_9x16_60s.mp4` | 1080×1920 | 30 | H.264 High | AAC 48 kHz stereo | 60.0 s | 1 800 | 28.6 MB | −13.6 LUFS | meets |
+| `output/DIDIK_Promo_TikTok_9x16_60s.mp4` (energetic cut) | 1080×1920 | 30 | H.264 High | AAC 48 kHz stereo | 60.1 s | 1 800 | 90.6 MB | −13.8 LUFS | meets |
 | `output/DIDIK_Promo_Landscape_16x9.mp4` (optional) | 1920×1080 | 30 | H.264 High | AAC 48 kHz stereo | 60.0 s | 1 800 | 25.5 MB | −13.6 LUFS | meets |
 | `output/DIDIK_Promo_Cover_9x16.png` | 1080×1920 | — | PNG | — | — | — | 0.6 MB | — | meets |
 
@@ -21,6 +21,11 @@ Still stretches over 2.5 s flagged by ffmpeg, each checked: the logo holds at th
 dashboard and the game picker between scrolls, and two moments in the game section (Lumba Sampan at 2:24,
 Teka Gambar at 3:19) where the children are reading a question and only the countdown moves. None is a
 frozen or dropped frame.
+
+The energetic promo is larger (CRF 17) because confetti, moving dot backgrounds and constant motion need the
+bitrate; it is well inside TikTok's and Instagram's upload limits. It has no black or still stretches at all.
+Every scene was checked on stills at its entrances, its hits and its transition frames: captions sit inside the
+safe area, wipes fully cover each cut, and no caption sits on the app's own text.
 
 ## Contact sheets
 
@@ -43,6 +48,11 @@ frozen or dropped frame.
 | Kubu Pasir phone take shows no castle | left out of the promo montage (Pasar Malam used); kept in the demo, where the host board shows the class's castles |
 
 ## Claims
+
+The energetic promo's Story Mode battle is a motion-graphic trailer composed from the game's own sprites,
+effect sheets and banners (stated in `STORYBOARD.md`), followed by the real recorded run. The quiz moment
+animates the recording quiz's own question ("Berapakah kaki seekor ayam?") in the app's answer colours.
+
 
 Every caption was checked against `FEATURE_AUDIT.md` (the "Claims used in the films" table). "14 permainan 2D"
 is used because all fourteen were played with real answers on camera. Hikayat Lima Alam is shown as the mode's

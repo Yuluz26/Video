@@ -5,30 +5,41 @@ Every on-screen line is in `remotion/copy.ts` (promo) or `remotion/demo-plan.ts`
 against `FEATURE_AUDIT.md`. Nothing here is mocked: every moving picture is a recording of the app running
 locally, played by scripted browser sessions (Ali, Aina, Amir) that answer by tapping the correct tile.
 
-Audio: an original chiptune score written for these films (`audio/generate.py`, 120 BPM, square/triangle/noise
-voices, no third-party material) and DIDIK's own UI sounds ported offline from `live/web/src/lib/sound.ts`.
+Audio: original chiptune scores written for these films (`audio/generate.py`: `hype` for the promo, `promo` for the
+calm cut and the 16:9 recut, `bed` for the demo; 120 BPM, square/triangle/noise voices, no third-party material) and DIDIK's own UI sounds ported offline from `live/web/src/lib/sound.ts`.
 No voiceover: the promo is caption-led. The browser recordings carry no audio.
 
-## A. Promo — 60 s, 1080×1920 (and a 16:9 recut)
+## A. Promo — 60 s, 1080×1920 (`DIDIK-Promo-9x16`, `remotion/PromoHype.tsx`)
 
-120 BPM, so one beat = 15 frames and one bar = 60 frames. Cuts sit on beats; the logo lands on the 4.0 s hit
-and the game montage starts on the chorus at 20 s.
+The energetic cut. Real recordings stay the spine, staged inside layered motion: phones and screens that
+spring in, overshoot and squash on landing; sticker type (thick white outline, extruded shadow) popping letter
+by letter and wobbling on the beat; DIDIK's own pixel characters and Didi hopping on the beat; the app's 3D
+stickers bobbing in parallax; confetti, pixel-star bursts, shockwaves and screen shake on the hits; shape wipes
+(stripes, iris, star, blob, flash) that cover every cut. Score: `audio/generate.py hype`, 120 BPM (beat = 15
+frames). Every cut and hit sits on the grid; sound effects are listed with their frames in `remotion/hype-plan.ts`.
 
-| Time | Frames | Scene | On screen (BM) | Source footage | Audio |
-| --- | --- | --- | --- | --- | --- |
-| 0.0–3.7 s | 0–112 | Hook: four real moments, a cut every two beats | **Macam mana kalau kuiz jadi sebuah permainan?** | `lompat_phone` (right island, +100), `pancing_phone` (Lempar joran), `lumba_phone` (race), `pasar_phone` (selling) | arp intro, riser into 4.0 s |
-| 3.7–7.0 s | 112–210 | Logo lands on the hit, pixel sparkles | DIDIK logo · *Main kuiz bersama kawan.* | `brand/didik-logo-dark.png` (rendered from the app's Logo component) | "go" chime on 4.0 s |
-| 7.0–14.0 s | 210–420 | A parent writes a quiz, then picks a game | *Untuk ibu bapa dan guru* · **Cipta soalan. Pilih permainan.** · *Enam belas jenis soalan, dengan gambar dan penerangan.* → *Satu kuiz, banyak cara untuk bermain.* | `create_quiz_1080p`, `game_picker_1080p` | verse, "pop" on each cut |
-| 14.0–20.0 s | 420–600 | Room opens on the big screen; Ali types the code on his phone (same moment) | **Masuk dengan kod. Tiada akaun untuk anak-anak.** · *Kod 6 digit, pautan atau kod QR. Pilih haiwan, tulis nama.* | `host_lobby_1080p` + `phone_join_9x16`, both at 1.6× so the code, the name and the lobby fit | "join" chime |
-| 20.0–36.0 s | 600–1080 | Montage, one game per bar, the child's real phone screen | **Jawab, cabar diri dan kumpul ganjaran.** then each game's name and style label; ends on the 14 badges · **14 permainan 2D. Satu kuiz.** | `interaktif` (spelling), `lompat`, `lumba`, `kebun`, `pancing`, `pasar`, `hutan` phone clips; badges from the game picker | chorus |
-| 36.0–44.0 s | 1080–1320 | Hikayat Lima Alam: hero, battle, boss | *Story Mode* · **Terokai Hikayat Lima Alam.** · *Dunia 1, Tasik Chini: lima musuh, kemudian Naga Chini. Pilih elemen, jawab, serang.* | `legenda_player_1080p`, the whole 16:9 frame at full width (three moments: a battle, the element unlock, the boss) | breakdown |
-| 44.0–52.0 s | 1320–1560 | Everyone in one race; then the podium | **Main bersama kawan-kawan.** · *Semua di skrin besar. Setiap anak di telefon sendiri.* → *Di hujung permainan, semua naik podium.* | `lumba_host` + `lumba_phone`, then `lumba_results_host` + `lumba_results_phone` | final chorus, "correct" on the podium |
-| 52.0–60.0 s | 1560–1800 | Brand close | DIDIK logo · **Belajar. Bermain. Berkembang.** · **Kenali DIDIK** · didik.engineprofit.io | logo | the app's own fanfare at 56 s, ring out |
+| Time | Frames | Scene | Motion | Source |
+| --- | --- | --- | --- | --- |
+| 0–4 s | 0–120 | Hook: **Macam mana kalau KUIZ jadi PERMAINAN?!** | letters pop on beats; four phones fly in fanned; confetti; camera push and white flash into the hit | lompat, lumba, pancing, pasar phone clips |
+| 4–7 s | 120–210 | Logo smash on the 4.0 s hit · **Main kuiz bersama kawan!** | logo lands from 2.6× with squash, shockwave, sparkles, confetti; six chibi kids hop in and bounce on every beat | logo, `chars/chibi-*` |
+| 7–13 s | 210–390 | **Cipta soalan!** → **Pilih permainan!** | the screen swings in, stickers pop out of it; the card flips to the game picker and 14 badges burst into an arc | create_quiz, game_picker; badges |
+| 13–18 s | 390–540 | **Masuk dengan kod!** · *Tiada akaun untuk anak-anak* | 790 750 pops digit by digit on half beats; Ali, Aina and Amir hop in with name tags | phone_join (name form → lobby) |
+| 18–22 s | 540–660 | Quiz moment over the build: **Berapakah kaki seekor ayam?** | answer tiles bounce in and pulse faster; the tap on "2"; tile turns green, others fall away; confetti, coins, **Hebat! +100**, Didi cheers | the quiz's own question and the app's answer colours |
+| 22–34 s | 660–1020 | Montage on the drop: Kuiz Interaktif, Lompat!, Lumba Sampan, Kebun Ajaib, Pancing Ikan, Pasar Malam | one per bar; each world reveals in a circle, the phone flies in over the last one flying out (8-frame overlap), stickers and a reward pop on the beat | the six phone clips |
+| 34–36 s | 1020–1080 | **14 permainan 2D!** | the 14 badges rain in and bounce into a grid; camera dives in | badges |
+| 36–38 s | 1080–1140 | Story title: **STORY MODE · HIKAYAT LIMA ALAM** | gold sticker type, embers rising, the five world symbols orbit and land | `story/ui`, field painting |
+| 38–40 s | 1140–1200 | Five worlds, slash cuts: Tasik Chini, Batang Lupar, Hutan Larut, Rimba Bayangan, Gunung Ledang, each with its boss | each world's living scene video, boss sprite sliding, shake on every cut | `story/worlds/*/scene.mp4`, `boss.webp` |
+| 40–46 s | 1200–1380 | Battle: Hang Tuah and Mahsuri against Naga Chini | the game's banners (Pertarungan Bermula!, Jawapan Betul!, Boss Dikalahkan!); HUD with five boss bars, hearts and elements; Petir chosen; five hits with the game's 12-frame element effects (petir, api, angin, air, tanah), camera punch, shake, flash, boss recoil, damage numbers; boss blinks out; victory pose; confetti | `story/heroes`, `story/fx/*_slash`, `story/banners/*_sheet`, field painting |
+| 46–48 s | 1380–1440 | **Jawab soalan, SERANG BOSS!** · *Dalam DIDIK sebenar* | the recorded Legenda run flies in | legenda_player (recorded) |
+| 48–54 s | 1440–1620 | **Main bersama kawan-kawan!** | podium blocks rise, Ali, Aina and Amir drop on them, the crown falls on Ali; the real podium on the phone | lumba_results phone |
+| 54–60 s | 1620–1800 | Logo smash · **Belajar. Bermain. Berkembang.** (one word per beat) · **Kenali DIDIK** · didik.engineprofit.io | Didi waves; the call to action bounces on the 56 s fanfare; confetti finale | logo, `chars/didi-wave` |
 
-Safe area: all text sits inside x 72–900 px and y 220–1500 px, clear of TikTok/Reels buttons and captions.
+The Story Mode battle is a motion-graphic trailer composed from the game's own art and effect sheets, timed
+the way the game plays a battle (an attack per right answer, five boss bars, the element chosen before a boss
+answer). It is followed by the real recorded run so the trailer stays anchored to the app.
 
-The 16:9 recut (`DIDIK-Promo-16x9`) keeps the same beats and copy; the host's big screen leads and the
-phone sits beside it.
+The previous, calmer cut is kept as `DIDIK-Promo-9x16-Calm` (`remotion/Promo.tsx`); the 16:9 recut
+(`DIDIK-Promo-16x9`) follows that calmer timeline.
 
 ## B. Full feature demo — 5 min 37 s, 1920×1080
 

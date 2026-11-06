@@ -75,6 +75,7 @@ room, payments, accounts and password reset are not shown.
 | Terokai Hikayat Lima Alam. · Dunia 1, Tasik Chini: lima musuh, kemudian Naga Chini. Pilih elemen, jawab, serang. | `legenda_player_1080p` (world 1 played; the mode's name is "Hikayat Lima Alam") |
 | Main bersama kawan-kawan. Semua di skrin besar. Setiap anak di telefon sendiri. | three separate player sessions in every take; host screen beside Ali's phone |
 | Di hujung permainan, semua naik podium. | `lumba_results_*` |
+| Story Mode battle in the energetic promo | a trailer built from the game's own Legenda art (heroes, Naga Chini, the five worlds, element effects, banners), timed as the game plays a battle; the real recorded run follows it |
 | Kenali DIDIK · didik.engineprofit.io | address given by the project owner; not reachable from this sandbox, so not checked |
 
 ## Count
