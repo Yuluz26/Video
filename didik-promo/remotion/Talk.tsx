@@ -7,6 +7,7 @@ import { AbsoluteFill, Audio, Img, interpolate, OffthreadVideo, Sequence, spring
 import { Clip, Logo, Phone, Screen } from './components';
 import { BADGES } from './badges';
 import { beatPulse, bounce, Confetti, Flash, Pop, Shake, Shockwave, SparkleBurst, SpriteSheet, Star4, Sticker, StickerText, usePop, Wipe } from './motion';
+import { HAND, HAND2, HAND_START } from './talk-hands';
 import { PHRASES } from './talk-captions';
 import { C, FONT_DISPLAY, FONT_PIXEL } from './theme';
 
@@ -37,7 +38,7 @@ const POSES: Array<[number, number, number, number]> = [
   [7.6, 0, 110, 0.86], // room for the DIDIK logo above him
   [10.9, 0, 90, 0.9], // A B C D above him
   [13.9, 0, 60, 0.94],
-  [16.95, 270, 150, 0.74], // "macam ni": bottom right, games on the left
+  [16.95, 0, 0, 1], // "macam ni": full size, so the cards sit exactly on his tracked hand
   [20.7, 0, 110, 0.86], // 14 games orbiting behind
   [27.5, 0, 30, 0.97],
   [29.85, -280, 30, 0.52], // standing in the game world, bottom left
@@ -249,6 +250,50 @@ const GameCard: React.FC<{ clip: string; from: number; name: string; at: number;
   );
 };
 
+/** A game card standing on Yul's open palm (MediaPipe track), following his hand. It pops out of the palm
+ *  on its cue word and shrinks away when the next one comes. */
+const handAt = (frame: number, hand: 'left' | 'right') => {
+  const path = hand === 'left' ? HAND : HAND2;
+  const i = Math.max(0, Math.min(path.length - 1, frame - Math.round(HAND_START * 30)));
+  return path[i];
+};
+const HandCard: React.FC<{ clip: string; from: number; name: string; at: number; out?: number; seed: string; hand: 'left' | 'right' }> = ({ clip, from, name, at, out, seed, hand }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const { x: px, y: py, s: ps } = usePose();
+  if (frame < at || (out !== undefined && frame > out + 8)) return null;
+  const [hx, hy] = handAt(frame, hand);
+  const [lx] = handAt(frame - 3, hand);
+  // the hand in output pixels, through the same transform as Yul (origin bottom centre)
+  const X = 540 + (hx - 540) * ps + px;
+  const Y = 1920 - (1920 - hy) * ps + py;
+  const H = 500 * ps; // two cards on screen at once: one per hand
+  const Wd = ((H - H * 0.036) * 9) / 16 + H * 0.036;
+  const cx = Math.max(Wd / 2 + 20, Math.min(1060 - Wd / 2, X));
+  const bottom = Math.max(160 + H, Math.min(1900, Y + 70 * ps));
+  const p = bounce(frame, at, fps, 260, 10, 0.55);
+  const over = p - 1;
+  const q = out === undefined ? 0 : interpolate(frame, [out, out + 8], [0, 1], { ...clamp, easing: (k) => k * k });
+  const lean = Math.max(-18, Math.min(18, (hx - lx) * 0.12));
+  const sc = Math.max(0, p) * (1 - q);
+  const labelSize = 48 * ps;
+  const labelW = name.length * labelSize * 0.75 + 40; // Pixelify Sans plus the sticker outline, about 0.75 em per letter
+  const labelShift = Math.max(labelW / 2 + 16, Math.min(1064 - labelW / 2, cx)) - cx;
+  return (
+    <>
+      <div style={{ position: 'absolute', left: cx - Wd / 2, top: bottom - H, width: Wd, height: H, transformOrigin: '50% 100%', transform: `rotate(${lean + q * 40}deg) scale(${sc * (1 + over * 0.25)}, ${sc * (1 - over * 0.3)})` }}>
+        <Phone height={H}><Clip name={clip} from={from} /></Phone>
+        {/* the name above the card, kept inside the frame (the right-hand card sits near the edge) */}
+        <div style={{ position: 'absolute', left: Wd / 2 + labelShift - 300, width: 600, top: -76 * ps, display: 'flex', justifyContent: 'center' }}>
+          <StickerText text={name} at={at + 3} size={labelSize} color={C.sea} stagger={1} wiggle={0.6} font={FONT_PIXEL} />
+        </div>
+      </div>
+      <SparkleBurst at={at} x={cx} y={bottom - 40} radius={300} count={11} seed={seed} />
+      <Confetti at={at} x={cx} y={bottom - 60} count={36} power={26} seed={seed} life={40} />
+    </>
+  );
+};
+
 const ANSWERS: Array<[string, string]> = [['A', C.coral], ['B', C.sea], ['C', C.sun], ['D', C.sky]];
 
 const Illustrations: React.FC = () => {
@@ -296,18 +341,19 @@ const Illustrations: React.FC = () => {
         </PopOut>
       </At>
 
-      {/* "Macam ni, macam ni, and macam ni" — a real game on each one */}
+      {/* "macam ni... macam ni... dan macam ni!" — a real game on each one, held in his hand */}
       <At a={17.1} b={20.75}>
         <PopOut>
-          <div style={{ position: 'absolute', left: 0, right: 0, top: 210 }}>
-            <StickerText text="Macam ni!" at={4} size={92} color={C.coral} wiggle={1.2} />
+          <div style={{ position: 'absolute', left: 0, right: 0, top: 200 }}>
+            <StickerText text="Macam ni!" at={4} size={88} color={C.coral} wiggle={1.2} />
           </div>
-          <GameCard clip="interaktif_phone_9x16" from={f(27.5)} name="Kuiz Interaktif" at={f(17.24) - f(17.1)} x={80} y={470} h={920} tilt={-6} side="left" out={f(18.2) - f(17.1)} />
-          <GameCard clip="lompat_phone_9x16" from={f(13.5)} name="Lompat!" at={f(18.2) - f(17.1)} x={110} y={480} h={920} tilt={4} side="right" out={f(19.54) - f(17.1)} />
-          <GameCard clip="teka_phone_9x16" from={f(16)} name="Teka Gambar" at={f(19.54) - f(17.1)} x={80} y={470} h={920} tilt={-3} side="left" />
-          {[f(17.24), f(18.2), f(19.54)].map((t, i) => <SparkleBurst key={i} at={t - f(17.1) + 2} x={330} y={900} radius={420} count={10} seed={`mn${i}`} />)}
         </PopOut>
       </At>
+      {/* both hands: the first game lands in his right hand (window side) and stays; the second in his left
+          (watch) hand; on "dan macam ni!" the sweeping left hand swaps it for the third */}
+      <HandCard hand="right" clip="interaktif_phone_9x16" from={f(27.5)} name="Kuiz Interaktif" at={f(17.24)} out={f(20.6)} seed="h1" />
+      <HandCard hand="left" clip="lompat_phone_9x16" from={f(13.5)} name="Lompat!" at={f(18.2)} out={f(19.54)} seed="h2" />
+      <HandCard hand="left" clip="teka_phone_9x16" from={f(16)} name="Teka Gambar" at={f(19.54)} out={f(20.6)} seed="h3" />
 
       {/* "kita ada 14 jenis game 2D" */}
       <At a={21.9} b={24.0}>

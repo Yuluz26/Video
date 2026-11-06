@@ -1,63 +1,82 @@
-"""Builds the talk's caption track from Whisper's word timings, with the corrections Whisper needs.
+"""Builds the caption track: Yul's own script, timed by Whisper's word timestamps.
 
-    python captions.py transcript.json ../remotion/talk-captions.ts
+The script (script.txt) is the text; Whisper (transcript.json) gives the timing. The two are aligned word by
+word (difflib); script words that Whisper heard differently take the timing of the Whisper words they
+replace, spread evenly across that stretch.
+
+    python captions.py transcript.json script.txt ../remotion/talk-captions.ts
 """
 
 from __future__ import annotations
 
+import difflib
 import json
+import re
 import sys
 
-src, out = sys.argv[1:3]
-segments = json.load(open(src))["segments"]
+src, script_path, out = sys.argv[1:4]
 
-# Whisper misheard a few words; these are what was said (and the brand names as written).
-FIX = {
-    "kurang,": "korang,", "lume": "Lumba", "sampan,": "Sampan,", "pancing": "Pancing", "ikan,": "Ikan,",
-    "kebun": "Kebun", "ajay,": "Ajaib,", "terus": "teruskan", "ulangkah": "ulangkaji",
-    "sonok": "seronok", "singgalah": "singgahlah", "didik.": "DIDIK.", "perjalanan.": "perjalanan,",
-}
-DROP = {("ke", 38.58)}  # "terus ke" was "teruskan"
-# fixes that apply to one moment only: (word, start) -> text
-AT = {("jenis", 49.48): "ni", ("Kenalah", 39.6): "kenalah"}
+# Whisper words, with "anak" "-anak" joined back together
+heard: list[dict] = []
+for seg in json.load(open(src))["segments"]:
+    for w in seg["words"]:
+        if w["w"].startswith("-") and heard:
+            heard[-1]["w"] += w["w"]
+            heard[-1]["e"] = w["e"]
+        else:
+            heard.append({"w": w["w"], "s": w["s"], "e": w["e"]})
 
-words = []
-for s in segments:
-    for w in s["words"]:
-        text, start, end = w["w"], w["s"], w["e"]
-        if (text, start) in DROP:
-            continue
-        if text.startswith("-") and words:  # "anak" "-anak" → "anak-anak"
-            words[-1]["w"] += text
-            words[-1]["e"] = end
-            continue
-        if text == ".io." and words and words[-1]["w"] == "engineprofit":  # the address, as one word
-            words.pop()
-            words[-1]["w"] = "didik.engineprofit.io."
-            words[-1]["e"] = end
-            continue
-        words.append({"w": AT.get((text, start), FIX.get(text, text)), "s": start, "e": end})
+script = open(script_path).read().split()
 
-# Phrases: break at punctuation, after 4 words, or at a pause.
+
+SAME = {"okey": "okay", "ha": "haa", "yalah": "yelah", "bos": "boss", "ini": "ni"}  # spelling variants, same word
+
+
+def norm(w: str) -> str:
+    w = re.sub(r"[^a-z0-9]", "", w.lower())
+    return SAME.get(w, w)
+
+
+a = [norm(w["w"]) for w in heard]
+b = [norm(w) for w in script]
+timed: list[dict] = []
+for tag, i1, i2, j1, j2 in difflib.SequenceMatcher(a=a, b=b, autojunk=False).get_opcodes():
+    if tag == "equal":
+        for k in range(j2 - j1):
+            timed.append({"w": script[j1 + k], "s": heard[i1 + k]["s"], "e": heard[i1 + k]["e"]})
+    elif tag in ("replace", "insert"):
+        if i2 > i1:
+            t0, t1 = heard[i1]["s"], heard[i2 - 1]["e"]
+        else:  # inserted: squeeze between neighbours
+            t0 = heard[i1 - 1]["e"] if i1 > 0 else 0.0
+            t1 = heard[i1]["s"] if i1 < len(heard) else t0 + 0.4
+        n = j2 - j1
+        for k in range(n):
+            timed.append({"w": script[j1 + k], "s": round(t0 + (t1 - t0) * k / n, 2), "e": round(t0 + (t1 - t0) * (k + 1) / n, 2)})
+    # "delete": Whisper heard something not in the script; nothing to show
+
+ABCD = re.compile(r"[A-D],?")
 phrases, cur = [], []
-for i, w in enumerate(words):
+for i, w in enumerate(timed):
     cur.append(w)
-    nxt = words[i + 1] if i + 1 < len(words) else None
-    end_punct = w["w"][-1] in ".,?!"
-    pause = nxt is not None and nxt["s"] - w["e"] > 0.35
-    if end_punct or len(cur) >= 4 or pause or nxt is None:
+    nxt = timed[i + 1] if i + 1 < len(timed) else None
+    in_abcd = bool(ABCD.fullmatch(w["w"]) and nxt and ABCD.fullmatch(nxt["w"]))  # keep "A, B, C, D" together
+    end_punct = w["w"][-1] in ".,?!" and not ABCD.fullmatch(w["w"])
+    pause = nxt is not None and nxt["s"] - w["e"] > 0.6
+    size = len([x for x in cur if not ABCD.fullmatch(x["w"])]) + (1 if any(ABCD.fullmatch(x["w"]) for x in cur) else 0)
+    if not in_abcd and (end_punct or size >= 5 or pause or nxt is None):
         phrases.append({"start": cur[0]["s"], "end": max(x["e"] for x in cur), "words": [{"w": x["w"], "s": x["s"]} for x in cur]})
         cur = []
-# hold each phrase until the next one starts (or 0.4 s), so captions never blink off mid-sentence
 for i, p in enumerate(phrases):
     nxt = phrases[i + 1]["start"] if i + 1 < len(phrases) else p["end"] + 0.8
-    p["end"] = round(min(nxt, max(p["end"] + 0.4, p["end"])), 2) if nxt - p["end"] > 0.6 else round(nxt, 2)
+    p["end"] = round(min(nxt, p["end"] + 0.4) if nxt - p["end"] > 0.6 else nxt, 2)
 
 with open(out, "w") as f:
-    f.write("// Generated by talk/captions.py from Whisper word timings (corrected). Seconds.\n")
+    f.write("// Generated by talk/captions.py: Yul's script, timed by Whisper word timestamps. Seconds.\n")
     f.write("export type CapWord = { w: string; s: number };\n")
     f.write("export const PHRASES: Array<{ start: number; end: number; words: CapWord[] }> = ")
     f.write(json.dumps(phrases, ensure_ascii=False, indent=1))
     f.write(";\n")
-print(len(words), "words,", len(phrases), "phrases")
-print(" | ".join(" ".join(w["w"] for w in p["words"]) for p in phrases))
+print(len(timed), "words,", len(phrases), "phrases")
+for p in phrases:
+    print(f"{p['start']:6.2f}  " + " ".join(w["w"] for w in p["words"]))
