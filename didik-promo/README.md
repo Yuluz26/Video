@@ -8,6 +8,7 @@ Two films made from real recordings of the DIDIK app running locally, edited in 
 | `output/DIDIK_Promo_TikTok_9x16_60s.mp4` | 60 s promo for TikTok / Reels, the energetic motion-graphics cut | 1080×1920, 30 fps, H.264 + AAC |
 | `output/DIDIK_Promo_Landscape_16x9.mp4` | the calmer promo, recut for 16:9 | 1920×1080, 30 fps, H.264 + AAC |
 | `output/DIDIK_Promo_Cover_9x16.png` | cover / thumbnail | 1080×1920 |
+| `output/DIDIK_Talk_Yul_9x16.mp4` | Yul's talk about DIDIK, edited: cut-out, floating stickers behind him, game recordings on his cues, captions (see `talk/README.md`) | 1080×1920, 30 fps, H.264 + AAC |
 
 The MP4 films and the recordings are not committed (too large); rebuild them with the steps below. The cover
 PNG and the QA contact sheets are committed.

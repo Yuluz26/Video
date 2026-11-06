@@ -6,6 +6,7 @@ live/web/src/lib/sound.ts (same notes, waves, lengths and slides), so the promo 
 
     python generate.py promo  out/music-promo.wav   [seconds]   # 120 BPM, builds to an ending sting
     python generate.py hype   out/music-hype.wav               # 60 s, the energetic cut (battle theme at 36 s)
+    python generate.py vlog   out/music-vlog.wav    seconds     # a light bed under speech: no melody
     python generate.py bed    out/music-bed.wav     seconds     # calmer loop for the feature demo
     python generate.py sfx    out/sfx/                          # one WAV per effect
 
@@ -309,6 +310,22 @@ def hype(seconds: float = 60.0) -> np.ndarray:
     return finish(track[: int(seconds * SR)], fade_out=1.0)
 
 
+def vlog(seconds: float) -> np.ndarray:
+    """A light, bouncy bed to sit under a voice: bass, arpeggio, soft kick and hats, no melody line,
+    and the battle chords from 29.5 s to 40 s (where the talk is about Story Mode)."""
+    track = np.zeros(int((seconds + 3) * SR))
+    bar = BEAT * 4
+    t, i = 0.0, 0
+    while t < seconds + 1:
+        battle = 29.5 <= t < 40
+        chord = BATTLE[i % 4] if battle else PROG[i % 4]
+        render_bar(track, t, chord, bass=True, arp=True, drums=1, pad=battle)
+        hats16(track, t, 0.03)
+        t += bar
+        i += 1
+    return finish(track[: int(seconds * SR)], fade_out=2.0) * 0.8
+
+
 def bed(seconds: float) -> np.ndarray:
     """A calmer loop for the feature demo: no lead on most bars, light drums, so narration captions read well."""
     track = np.zeros(int((seconds + 3) * SR))
@@ -347,6 +364,8 @@ if __name__ == "__main__":
         write(out, promo(float(sys.argv[3]) if len(sys.argv) > 3 else 60.0))
     elif kind == "hype":
         write(out, hype(float(sys.argv[3]) if len(sys.argv) > 3 else 60.0))
+    elif kind == "vlog":
+        write(out, vlog(float(sys.argv[3])))
     elif kind == "bed":
         write(out, bed(float(sys.argv[3])))
     elif kind == "sfx":

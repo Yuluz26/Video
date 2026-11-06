@@ -23,6 +23,7 @@ export const C = {
 
 export const FONT_DISPLAY = 'Fredoka, ui-rounded, system-ui, sans-serif';
 export const FONT_BODY = 'Nunito, system-ui, sans-serif';
+export const FONT_PIXEL = '"Pixelify Sans", Fredoka, system-ui, sans-serif'; // the pixel face of DIDIK's games
 
 let loaded: Promise<unknown> | null = null;
 export const loadFonts = () => {
@@ -31,6 +32,8 @@ export const loadFonts = () => {
     loadFont({ family: 'Fredoka', url: staticFile('fonts/fredoka-latin-ext-wght-normal.woff2'), weight: '300 700' }),
     loadFont({ family: 'Nunito', url: staticFile('fonts/nunito-latin-wght-normal.woff2'), weight: '200 1000' }),
     loadFont({ family: 'Nunito', url: staticFile('fonts/nunito-latin-ext-wght-normal.woff2'), weight: '200 1000' }),
+    loadFont({ family: 'Pixelify Sans', url: staticFile('fonts/pixelify-sans-latin-400-normal.woff2'), weight: '400' }),
+    loadFont({ family: 'Pixelify Sans', url: staticFile('fonts/pixelify-sans-latin-700-normal.woff2'), weight: '700' }),
   ]);
   return loaded;
 };

@@ -11,3 +11,7 @@ didik-promo/public/clips/
 didik-promo/public/audio/
 didik-promo/output/*.mp4
 didik-promo/public/story/
+didik-promo/talk/src/
+didik-promo/talk/*.mp4
+didik-promo/talk/*.webm
+didik-promo/public/talk/

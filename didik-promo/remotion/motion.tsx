@@ -55,7 +55,8 @@ export const StickerText: React.FC<{
   lineHeight?: number;
   style?: React.CSSProperties;
   out?: number;
-}> = ({ text, at, size, color = C.coral, shadow = C.ink, outline = '#fff', stagger = 2, wiggle = 1, align = 'center', lineHeight = 1.02, style, out }) => {
+  font?: string;
+}> = ({ text, at, size, color = C.coral, shadow = C.ink, outline = '#fff', stagger = 2, wiggle = 1, align = 'center', lineHeight = 1.02, style, out, font = FONT_DISPLAY }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const stroke = Math.max(6, size * 0.13);
@@ -64,7 +65,7 @@ export const StickerText: React.FC<{
   const leave = out === undefined ? 0 : interpolate(frame, [out, out + 8], [0, 1], clamp);
   let n = 0;
   return (
-    <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: size, lineHeight, textAlign: align, letterSpacing: '-0.01em', ...style }}>
+    <div style={{ fontFamily: font, fontWeight: 700, fontSize: size, lineHeight, textAlign: align, letterSpacing: '-0.01em', ...style }}>
       {text.split('\n').map((line, li) => (
         <div key={li} style={{ whiteSpace: 'nowrap' }}>
           {[...line].map((ch, ci) => {
