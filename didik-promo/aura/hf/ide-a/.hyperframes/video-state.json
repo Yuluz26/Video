@@ -1,7 +1,7 @@
 {
   "version": 1,
   "historyId": "428ecfcf-a271-4027-a5f9-e4412dc96cb3",
-  "currentRevision": "09d23163-d1ef-4928-9acc-6e8ca3c4cc53",
+  "currentRevision": "62dc5565-1933-45ab-b34c-dcd9a0a669d5",
   "pendingChanges": false,
   "files": {
     "gsap.min.js": {
@@ -13,8 +13,8 @@
       "content": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/53/53dbce1e19aa713cbb12ee0bc4d206143b45ab15e6ffbfcaa8f69572d4d24d50"
     },
     "index.html": {
-      "hash": "1e799b14fc0f33b66eeb79c2a1b694535ecd61914ffdd260e99858ad04af2ea1",
-      "content": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/1e/1e799b14fc0f33b66eeb79c2a1b694535ecd61914ffdd260e99858ad04af2ea1"
+      "hash": "174790bf5a3df1e02902f153e5efa793d563bf4f725f299351a053370f8b8daa",
+      "content": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/17/174790bf5a3df1e02902f153e5efa793d563bf4f725f299351a053370f8b8daa"
     },
     "jbm-400.woff2": {
       "hash": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
@@ -42,6 +42,36 @@
         "index.html": {
           "before": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/70/70d7e4c131d13e196e772176e2e2aac53cdf93c30ad916c5cf0a3eeaf760b250",
           "after": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/1e/1e799b14fc0f33b66eeb79c2a1b694535ecd61914ffdd260e99858ad04af2ea1"
+        }
+      }
+    },
+    "262f4fe7-079e-4e97-91cb-14e98876a388": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1794590164798,
+      "endedAt": 1794590164799,
+      "files": {
+        "index.html": {
+          "before": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/1e/1e799b14fc0f33b66eeb79c2a1b694535ecd61914ffdd260e99858ad04af2ea1",
+          "after": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/5e/5e168a616ce18ba99cfeda272f229d8d1504f55b9ef165ad72487a8745e2f0fc"
+        }
+      }
+    },
+    "62dc5565-1933-45ab-b34c-dcd9a0a669d5": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1794590276830,
+      "endedAt": 1794590276831,
+      "files": {
+        "index.html": {
+          "before": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/5e/5e168a616ce18ba99cfeda272f229d8d1504f55b9ef165ad72487a8745e2f0fc",
+          "after": "/root/.cache/hyperframes/history/428ecfcf-a271-4027-a5f9-e4412dc96cb3/blobs/17/174790bf5a3df1e02902f153e5efa793d563bf4f725f299351a053370f8b8daa"
         }
       }
     }
@@ -142,14 +172,15 @@
   },
   "renders": {
     "latest": {
-      "id": "fe17e5c1-e625-46b9-97d6-d421b45261aa",
-      "completedAt": 1794584533521,
+      "id": "1aec4d08-3666-4a40-88bc-645ffc12e10f",
+      "completedAt": 1794590314986,
       "output": "/home/user/Video/didik-promo/aura/hf/ide-a/ide-a.mp4",
       "status": "completed",
-      "revision": "09d23163-d1ef-4928-9acc-6e8ca3c4cc53"
+      "revision": "62dc5565-1933-45ab-b34c-dcd9a0a669d5"
     },
     "retainedRevisions": [
-      "09d23163-d1ef-4928-9acc-6e8ca3c4cc53"
+      "62dc5565-1933-45ab-b34c-dcd9a0a669d5",
+      "262f4fe7-079e-4e97-91cb-14e98876a388"
     ]
   },
   "pendingArtifactCleanup": []

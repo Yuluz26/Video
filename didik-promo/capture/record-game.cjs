@@ -12,7 +12,7 @@ const S = require('./session.cjs');
 
 const [mode, secondsArg, outDir, quizArg] = process.argv.slice(2);
 const SECONDS = Number(secondsArg || 20);
-const QUIZ = Number(quizArg || 12);
+const QUIZ = Number(quizArg || process.env.DIDIK_QUIZ || 21);
 // optional: room settings as JSON, and which of Ali's answers is a genuine mistake (shows the explanation)
 const SETTINGS = JSON.parse(process.env.ROOM_SETTINGS || '{}');
 const WRONG_AT = Number(process.env.ALI_WRONG_AT || 0);
@@ -23,6 +23,7 @@ const TAG = process.env.TAG ? `_${process.env.TAG}` : ''; // a second take of th
 // What a child does between questions in each game, most interesting first. Labels are the game's own.
 const ACTIONS = {
   harta: [/^Gali tempat/],
+  kampung: [/^Lihat kampung/], // open the shared village after each answer instead of skipping it
   pasukan: [/^Tawan petak/],
   kebun: [/Ketik untuk menuai/, /Ketik untuk siram/, /Ketik untuk menanam/],
   pancing: [/^Guna umpan emas/, /^Lempar joran$/],
@@ -48,7 +49,7 @@ async function villageStep(page, state) {
     state.until = Date.now() + 500;
     return;
   }
-  await act(page, [], state);
+  await act(page, ACTIONS.kampung, state);
 }
 const NEXT = /Soalan seterusnya|Teruskan|Buka soalan|Lihat hadiah/;
 
@@ -72,7 +73,8 @@ async function act(page, rules, state) {
     const label = ((await b.getAttribute('aria-label', { timeout: 300 }).catch(() => null)) || (await b.innerText({ timeout: 300 }).catch(() => ''))).replace(/\s+/g, ' ').trim();
     if (label && !/skrin penuh|bunyi|stiker|Bacakan|Dengar/i.test(label) && (await b.isEnabled().catch(() => false))) seen.push({ b, label });
   }
-  for (const rule of rules) {
+  // the 2D games now guide a child after each answer ("Jom berkebun! … Pergi ke batas"): follow it first
+  for (const rule of [/^Pergi ke/, ...rules]) {
     const hits = seen.filter((s) => rule.test(s.label));
     if (hits.length) {
       const pick = hits[Math.floor(Math.random() * hits.length)];
@@ -154,7 +156,7 @@ async function forestStep(page, state) {
   while (Date.now() < end) {
     for (const [i, k] of kids.entries()) {
       const wrong = i === 0 && WRONG_AT > 0 && states[0].answers + 1 === WRONG_AT;
-      const answered = await S.answerVisible(k.page, quiz, { wrong }).catch(() => false);
+      const answered = await S.answerVisible(k.page, quiz, { wrong }).catch((e) => { if (process.env.DEBUG && i === 0) console.error('answer error', e.message.split('\n')[0]); return false; });
       if (answered) {
         states[i].answers++;
         states[i].log.push(wrong ? 'jawapan salah (sengaja)' : 'jawab');

@@ -13,7 +13,7 @@ const [playerKind = 'host', maxArg = '300', outDir, untilArg = '1', hostArg = '1
 const MAX = Number(maxArg) * 1000;
 const UNTIL_CLEAR = untilArg === '1';
 const HOST_TOO = hostArg === '1';
-const QUIZ = 12;
+const QUIZ = Number(process.env.DIDIK_QUIZ || 21);
 const WEAK = { 'Tasik Chini': 'Petir', 'Batang Lupar': 'Api', 'Hutan Larut': 'Angin', 'Rimba Bayangan': 'Tanah', 'Gunung Ledang': 'Air' };
 const tag = playerKind === 'phone' ? 'phone_9x16' : 'player_1080p';
 
@@ -53,8 +53,10 @@ const tag = playerKind === 'phone' ? 'phone_9x16' : 'player_1080p';
     // hero choice
     const hero = page.locator('button.hero:enabled');
     if (await hero.first().isVisible().catch(() => false)) {
-      await page.waitForTimeout(2200);
+      // give the hero screen time to settle: a pick sent before the story is ready is not taken
+      await page.waitForTimeout(5000);
       await hero.first().click();
+      await page.waitForTimeout(3000);
       note('pilih wira');
       continue;
     }

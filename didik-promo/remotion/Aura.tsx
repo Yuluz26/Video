@@ -1,4 +1,4 @@
-// "Aura" — a TikTok of Yul building DIDIK, cut to "WE ON GO" (cinematic brass, ~129 BPM). Not an ad: the
+// "Aura" — a TikTok of Yul building DIDIK, cut to "We On Go" (cinematic brass, ~129 BPM). Not an ad: the
 // work itself. Real DIDIK source code typed in an editor (rendered with HyperFrames, hf/ide-*), the real
 // test run, then the real app and its games on the brass hits. Times are song seconds (beats.json).
 import React from 'react';
@@ -126,6 +126,7 @@ const Editor: React.FC = () => {
       <div style={{ position: 'absolute', left: 70, top: 300 }}>
         <Typed text="02:47 AM" at={0.07} size={112} cps={30} glow="rgba(255,182,39,.6)" color={C.sun} out={6.6} />
         <Typed text="// build log: DIDIK" at={0.8} size={38} weight={400} color="rgba(238,242,251,.75)" cursor={false} out={6.6} style={{ marginTop: 18 }} />
+        <Typed text="♪ We On Go" at={1.6} size={30} weight={400} color="rgba(238,242,251,.55)" cursor={false} out={6.6} style={{ marginTop: 12 }} />
       </div>
       <div style={{ position: 'absolute', left: 70, bottom: 520 }}>
         <Typed text="satu baris," at={3.02} size={72} out={6.69} />
@@ -134,7 +135,7 @@ const Editor: React.FC = () => {
         <Typed text="demi satu baris." at={6.69} size={72} out={9.47} />
       </div>
       <div style={{ position: 'absolute', left: 70, top: 300 }}>
-        <Typed text="49,552 baris kemudian." at={11.0} size={64} color={C.sun} glow="rgba(255,182,39,.5)" out={12.89} />
+        <Typed text="67,077 baris kemudian." at={11.0} size={64} color={C.sun} glow="rgba(255,182,39,.5)" out={12.89} />
       </div>
     </AbsoluteFill>
   );
@@ -145,7 +146,7 @@ const ThreeHits: React.FC = () => (
   <AbsoluteFill style={{ background: '#050508' }}>
     <Sequence from={f(14.26) - f(13.79)} layout="none">
       <AbsoluteFill style={{ opacity: 0.35, filter: 'blur(2px) saturate(.6)' }}>
-        <Clip name="landing_scroll_1080p" from={f(2)} zoom={1.9} focus={[30, 30]} />
+        <Clip name="v3_host_lobby_1080p" from={f(3)} zoom={1.6} focus={[25, 20]} />
       </AbsoluteFill>
     </Sequence>
     <Slam word="COMPILE." at={13.79} out={14.26} />
@@ -184,13 +185,13 @@ const Reveal: React.FC = () => {
       {/* the host's big screen, floating behind */}
       <div style={{ position: 'absolute', left: 40, top: 470 + drift * 0.5, opacity: hostIn, transform: `perspective(1600px) rotateY(${18 - 6 * hostIn}deg) rotateX(4deg) scale(${0.9 + 0.1 * hostIn})`, transformOrigin: '0% 50%' }}>
         <Screen width={1000} radius={20} style={{ position: 'relative', boxShadow: '0 40px 120px -30px rgba(255,59,48,.35), 0 0 0 1px rgba(255,255,255,.08)' }}>
-          <Sequence from={f(18.39 - 14.72)} layout="none"><Clip name="host_lobby_1080p" from={f(9)} /></Sequence>
+          <Sequence from={f(18.39 - 14.72)} layout="none"><Clip name="v3_host_lobby_1080p" from={f(9)} /></Sequence>
         </Screen>
       </div>
       {/* a child's phone, in front */}
       <div style={{ position: 'absolute', left: 300, top: 820 + (1 - phoneIn) * 900 + drift, transform: `rotate(${-4 + 4 * phoneIn}deg)` }}>
         <Phone height={1020} style={{ position: 'relative', boxShadow: '0 50px 120px -20px rgba(0,0,0,.9), 0 0 60px rgba(255,182,39,.18)' }}>
-          <Clip name="phone_join_9x16" from={f(2.5)} rate={1.25} />
+          <Clip name="v3_phone_join_9x16" from={f(3.6)} rate={1.4} />
         </Phone>
       </div>
       <div style={{ position: 'absolute', left: 70, top: 230 }}>
@@ -215,7 +216,7 @@ const Tests: React.FC = () => {
       <AbsoluteFill style={{ background: 'linear-gradient(180deg, rgba(0,0,0,.85) 0%, rgba(0,0,0,0) 30%)' }} />
       <div style={{ position: 'absolute', left: 70, top: 280 }}>
         <Typed text="test dulu." at={22.1} size={80} out={25.4} />
-        <Typed text="269 passed." at={25.0} size={80} color="#3ddc84" glow="rgba(61,220,132,.6)" out={25.4} cursor={false} style={{ marginTop: 10 }} />
+        <Typed text="313 passed." at={25.0} size={80} color="#3ddc84" glow="rgba(61,220,132,.6)" out={25.4} cursor={false} style={{ marginTop: 10 }} />
       </div>
       <AbsoluteFill style={{ background: '#000', opacity: black }} />
     </AbsoluteFill>
@@ -233,12 +234,12 @@ const Drop: React.FC = () => {
       {/* the boss reveal, then the attack, both from the recorded run */}
       <Sequence durationInFrames={42} layout="none">
         <AbsoluteFill style={{ transform: `scale(${1.35 - 0.25 * p})` }}>
-          <Clip name="legenda_player_1080p" from={f(98.4)} fit="cover" position="62% 50%" />
+          <Clip name="v3_legenda_player_1080p" from={f(88.3)} fit="cover" position="62% 50%" />
         </AbsoluteFill>
       </Sequence>
       <Sequence from={42} layout="none">
         <AbsoluteFill style={{ transform: `scale(${1.08 + interpolate(frame, [42, 82], [0, 0.08], clamp)})` }}>
-          <Clip name="legenda_player_1080p" from={f(107.5)} fit="cover" position="45% 50%" />
+          <Clip name="v3_legenda_player_1080p" from={f(100.6)} fit="cover" position="45% 50%" />
         </AbsoluteFill>
       </Sequence>
       <AbsoluteFill style={{ background: 'linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0) 65%, rgba(0,0,0,.8) 100%)' }} />
@@ -257,20 +258,20 @@ const Drop: React.FC = () => {
 // ───────────────────────────── 6. the games, one per brass hit (28.44 – 46.74)
 type Shot = { clip: string; from: number; name: string; file: string; kind: 'phone' | 'host' };
 const SHOTS: Shot[] = [
-  { clip: 'lompat_phone_9x16', from: 13.5, name: 'LOMPAT!', file: 'modes/jump.py', kind: 'phone' },
-  { clip: 'lumba_phone_9x16', from: 18, name: 'LUMBA SAMPAN', file: 'modes/race.py', kind: 'phone' },
-  { clip: 'pancing_phone_9x16', from: 11, name: 'PANCING IKAN', file: 'modes/fishing.py', kind: 'phone' },
-  { clip: 'kebun_phone_9x16', from: 14, name: 'KEBUN AJAIB', file: 'modes/garden.py', kind: 'phone' },
-  { clip: 'pasukan_host_1080p', from: 12, name: 'PASUKAN WARNA', file: 'modes/teams.py', kind: 'host' },
-  { clip: 'pasar_phone_9x16', from: 19, name: 'PASAR MALAM', file: 'modes/market.py', kind: 'phone' },
-  { clip: 'interaktif_phone_9x16', from: 27.5, name: 'KUIZ INTERAKTIF', file: 'modes/interaktif.py', kind: 'phone' },
-  { clip: 'harta_phone_9x16', from: 20, name: 'PULAU HARTA KARUN', file: 'modes/treasure.py', kind: 'phone' },
-  { clip: 'kampung_host_1080p', from: 20, name: 'KAMPUNG KITA', file: 'modes/village.py', kind: 'host' },
-  { clip: 'teka_phone_9x16', from: 16, name: 'TEKA GAMBAR', file: 'modes/picture.py', kind: 'phone' },
-  { clip: 'wau_phone_9x16', from: 9, name: 'LUMBA WAU', file: 'modes/kite.py', kind: 'phone' },
-  { clip: 'keretapi_phone_9x16', from: 10, name: 'KERETA API KAMPUNG', file: 'modes/train.py', kind: 'phone' },
-  { clip: 'hutan_host_1080p', from: 20, name: 'HUTAN MISTERI', file: 'modes/forest.py', kind: 'host' },
-  { clip: 'lumba_results_phone_9x16', from: 29, name: 'TAMAT!', file: 'room.py · podium', kind: 'phone' },
+  { clip: 'v3_interaktif_phone_9x16', from: 20, name: 'KUIZ INTERAKTIF', file: 'modes/interaktif.py', kind: 'phone' },
+  { clip: 'v3_lompat_phone_9x16', from: 22.5, name: 'LOMPAT!', file: 'modes/jump.py', kind: 'phone' },
+  { clip: 'v3_lumba_phone_9x16', from: 20.5, name: 'LUMBA SAMPAN', file: 'modes/race.py', kind: 'phone' },
+  { clip: 'v3_interaktif-sejarah_phone_9x16', from: 19, name: 'GALI ARTIFAK', file: 'subjects/sejarah/Gali.svelte', kind: 'phone' },
+  { clip: 'v3_kebun_phone_9x16', from: 12, name: 'KEBUN AJAIB', file: 'modes/garden.py', kind: 'phone' },
+  { clip: 'v3_pasar_phone_9x16', from: 18, name: 'PASAR MALAM', file: 'modes/market.py', kind: 'phone' },
+  { clip: 'v3_interaktif-islam_phone_9x16', from: 24, name: 'WARNA TAJWID', file: 'subjects/islam/Tajwid.svelte', kind: 'phone' },
+  { clip: 'v3_harta_phone_9x16', from: 18.5, name: 'PULAU HARTA KARUN', file: 'modes/treasure.py', kind: 'phone' },
+  { clip: 'v3_kampung_b_phone_9x16', from: 30, name: 'KAMPUNG KITA', file: 'modes/village.py', kind: 'phone' },
+  { clip: 'v3_teka_phone_9x16', from: 27, name: 'TEKA GAMBAR', file: 'modes/picture.py', kind: 'phone' },
+  { clip: 'v3_interaktif-sejarah_phone_9x16', from: 30, name: 'BINA EMPAYAR', file: 'subjects/sejarah/Empayar.svelte', kind: 'phone' },
+  { clip: 'v3_interaktif-islam_phone_9x16', from: 33, name: 'HURUF HIJAIYAH', file: 'subjects/islam/Hijaiyah.svelte', kind: 'phone' },
+  { clip: 'v3_hutan_phone_9x16', from: 22, name: 'HUTAN MISTERI', file: 'modes/forest.py', kind: 'phone' },
+  { clip: 'v3_lumba_results_phone_9x16', from: 28, name: 'TAMAT!', file: 'room.py · podium', kind: 'phone' },
 ];
 
 const ShotView: React.FC<{ s: Shot; i: number; len: number }> = ({ s, i, len }) => {

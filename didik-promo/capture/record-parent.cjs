@@ -15,7 +15,7 @@ const S = require('./session.cjs');
 
 const [outDir, ...only] = process.argv.slice(2);
 const want = (s) => !only.length || only.includes(s);
-const QUIZ = 12;
+const QUIZ = Number(process.env.DIDIK_QUIZ || 21);
 
 async function smoothTo(page, selector, ms = 1600) {
   await page.evaluate(({ selector, ms }) => new Promise((done) => {

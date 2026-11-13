@@ -48,13 +48,20 @@ class Stage {
         '--autoplay-policy=no-user-gesture-required', '--disable-infobars', '--noerrdialogs', '--disable-features=Translate,TranslateUI'],
       ignoreDefaultArgs: ['--enable-automation'],
     });
-    if (mobile) {
-      // The phone is emulated inside a normal window; real browser fullscreen (Legenda asks for it when the
-      // hero is chosen) would move the page off the recorded area. A phone in fullscreen looks the same.
-      await this.context.addInitScript(() => {
-        Element.prototype.requestFullscreen = function () { return Promise.resolve(); };
-      });
-    }
+    // The recorded window is a kiosk window that already fills its display, i.e. full screen. Tell the page
+    // so: DIDIK asks to go full screen on join and when a hero is chosen, and real fullscreen requests from
+    // an emulated phone would move the page off the recorded area (or never settle).
+    await this.context.addInitScript(() => {
+      const root = () => document.documentElement;
+      for (const key of ['fullscreenElement', 'webkitFullscreenElement']) {
+        Object.defineProperty(Document.prototype, key, { configurable: true, get: root });
+      }
+      Element.prototype.requestFullscreen = function () {
+        setTimeout(() => document.dispatchEvent(new Event('fullscreenchange')));
+        return Promise.resolve();
+      };
+      Document.prototype.exitFullscreen = function () { return Promise.resolve(); };
+    });
     this.page = this.context.pages()[0] || (await this.context.newPage());
     this.offset = mobile ? await this.findPage() : { x: 0, y: 0 };
     return this;

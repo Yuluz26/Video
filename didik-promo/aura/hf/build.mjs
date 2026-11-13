@@ -26,18 +26,18 @@ const A = {
   ],
   // then a file per beat, scrolling, while the line counter rolls up
   flips: [
-    [9.47, `${MODES}/race.py`, 'py'],
+    [9.47, 'live/server/didik_live/games.py', 'py'],
     [9.94, `${MODES}/jump.py`, 'py'],
-    [10.43, 'live/web/src/lib/games/legenda/Stage.svelte', 'ts'],
-    [10.91, 'live/web/src/lib/room.svelte.ts', 'ts'],
-    [11.42, 'live/web/src/lib/sound.ts', 'ts'],
+    [10.43, 'live/web/src/lib/subjects/sejarah/Gali.svelte', 'ts'],
+    [10.91, 'live/web/src/lib/games/legenda/Stage.svelte', 'ts'],
+    [11.42, 'live/web/src/lib/room.svelte.ts', 'ts'],
     [11.91, 'live/server/didik_live/questions.py', 'py'],
     [12.4, 'live/web/src/lib/games/legenda/LegendaPlayer.svelte', 'ts'],
   ].map(([at, file, lang]) => ({ at, file, lang, lines: read(file, 1, 60) })),
   flipsEnd: 12.89,
   command: { at: 12.95, text: 'npm run build && didik-live', cps: 48 },
   terminal: ['$ didik-live', '', '  DIDIK Main Bersama', '  Buka:  http://localhost:8080', ''],
-  totalLines: 49552,
+  totalLines: 67077, // .py, .svelte and .ts in live/, without node_modules, builds and generated files
 };
 
 // ── ide-b: the test suite, 3.73 s
@@ -119,7 +119,7 @@ const page = (id, data, width = 1080, height = 1920) => `<!doctype html>
   <div class="term" id="term"></div>
 </div>
 <script>
-const D = ${JSON.stringify(data)};
+const D = ${JSON.stringify(data).replace(/<\//g, "<\\/")};
 const KW = /^(def|class|return|if|elif|else|for|in|not|and|or|is|None|True|False|import|from|as|with|async|await|const|let|export|function|type|new|this|lambda|raise|try|except|pass|while|break|continue|interface|extends)$/;
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 function hl(line, lang) {

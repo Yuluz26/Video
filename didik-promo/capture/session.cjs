@@ -71,7 +71,7 @@ async function start(host) {
 async function answerVisible(page, quiz, { wrong = false } = {}) {
   // the standard question card, or Kuiz Interaktif's own card
   const prompt = page.locator('.question .prompt, #ik-prompt').first();
-  if (!(await prompt.isVisible().catch(() => false))) return false;
+  if (!(await prompt.isVisible({ timeout: 600 }).catch(() => false))) return false;
   const text = (await prompt.innerText({ timeout: 800 }).catch(() => '')).trim();
   const q = quiz.questions.find((x) => x.prompt.trim() === text);
   if (!q) return false;
@@ -88,12 +88,38 @@ async function answerVisible(page, quiz, { wrong = false } = {}) {
   } else {
     return false;
   }
+  // Gali Artifak (Ekspedisi Sejarah): dig every plot three times, then pick the find and check
+  const plots = page.locator('button[aria-label$=", gali"]');
+  if (q.type === 'single' && (await plots.count())) {
+    for (let round = 0; round < 3; round++) {
+      for (let k = 0; k < (await plots.count()); k++) {
+        await plots.nth(0).click({ force: true, timeout: 1500 }).catch(() => {});
+        await page.waitForTimeout(110);
+      }
+    }
+    for (let guard = 0; guard < 12 && (await plots.count()); guard++) {
+      await plots.first().click({ force: true, timeout: 1500 }).catch(() => {});
+      await page.waitForTimeout(110);
+    }
+    await page.waitForTimeout(500);
+    await page.locator(`button[aria-label="Temuan: ${label}"]`).first().click({ force: true, timeout: 2000 }).catch(() => {});
+    await page.waitForTimeout(600);
+    await page.getByRole('button', { name: /^Semak/ }).first().click({ timeout: 2000 }).catch(() => {});
+    return true;
+  }
   // Lompat! answers by jumping to an island instead of tapping a tile
-  const btn = (await tile.count()) ? tile.first() : page.locator(`button[aria-label="Lompat ke ${label}"]`).first();
-  if (!(await btn.isEnabled().catch(() => false))) return false;
+  const jump = page.locator(`button[aria-label="Lompat ke ${label}"]`);
+  // the classic tile, Lompat!'s island, or a subject game's own button (Huruf Hijaiyah, Siapakah Aku?...)
+  const own = !(await tile.count()) && !(await jump.count());
+  const btn = (await tile.count()) ? tile.first() : (await jump.count()) ? jump.first() : page.getByRole('button', { name: label, exact: true }).first();
+  if (!(await btn.isEnabled({ timeout: 600 }).catch(() => false))) return false;
   if (await btn.evaluate((b) => b.classList.contains('mine') || b.classList.contains('picked')).catch(() => false)) return false;
   await page.waitForTimeout(700 + Math.random() * 500); // a child reads before tapping
   await btn.click({ timeout: 3000 }).catch(() => {});
+  if (own) {
+    await page.waitForTimeout(500);
+    await page.getByRole('button', { name: /^Semak/ }).first().click({ timeout: 2000 }).catch(() => {});
+  }
   return true;
 }
 
@@ -103,7 +129,7 @@ async function answerTouch(page, q) {
   const scope = page; // only one question is ever on screen
   if (q.type === 'count') {
     const add = scope.locator('.pile button.obj');
-    if (!(await add.first().isEnabled().catch(() => false))) return false;
+    if (!(await add.first().isEnabled({ timeout: 600 }).catch(() => false))) return false;
     await beat(700);
     for (let i = 0; i < q.answer; i++) { await add.first().click(); await beat(); }
     await beat(500);
@@ -112,7 +138,7 @@ async function answerTouch(page, q) {
   }
   if (q.type === 'spell') {
     const pool = scope.locator('.pool button.letter');
-    if (!(await pool.first().isEnabled().catch(() => false))) return false;
+    if (!(await pool.first().isEnabled({ timeout: 600 }).catch(() => false))) return false;
     await beat(700);
     for (const ch of [...q.word]) {
       // a tapped tile flies to its box; wait for the pool to settle and retry instead of waiting 30 s
@@ -129,10 +155,30 @@ async function answerTouch(page, q) {
   }
   if (q.type === 'sort') {
     const groups = Object.fromEntries(q.groups.map((g) => [g.id, g.name]));
-    if (!(await scope.locator('.pool button.thing').first().isEnabled().catch(() => false))) return false;
+    if (!(await scope.locator('.pool button.thing').first().isEnabled({ timeout: 600 }).catch(() => false))) {
+      // a subject game's own sorting (Warna Tajwid, Balang Jirim...): tap the thing, then its group
+      // by accessible name, or by visible text (some pieces carry only their letter)
+      const piece = (text) => {
+        const byName = scope.getByRole('button', { name: text, exact: true });
+        return byName.or(scope.locator('button').filter({ hasText: new RegExp(`^\\s*${escape(text)}\\s*$`) })).first();
+      };
+      if (!(await piece(q.items[0].text).count())) return false;
+      await beat(700);
+      // these games pick a group (a colour, a jar) first, then tap everything that belongs to it
+      for (const g of q.groups) {
+        await piece(g.name).click({ force: true, timeout: 2000 }).catch(() => {});
+        await beat(260);
+        for (const item of q.items.filter((x) => x.group === g.id)) {
+          await piece(item.text).click({ force: true, timeout: 2000 }).catch(() => {});
+          await beat();
+        }
+      }
+      await scope.getByRole('button', { name: /^Semak/ }).first().click({ timeout: 2500 }).catch(() => {});
+      return true;
+    }
     await beat(700);
     for (const item of q.items) {
-      await scope.locator('.pool button.thing').filter({ hasText: item.text }).first().click({ timeout: 3000 });
+      await scope.locator('.pool button.thing').filter({ hasText: item.text }).first().click({ force: true, timeout: 3000 });
       await beat(300);
       // the baskets wiggle while a thing is picked, so a stability wait never ends; tap like a finger would
       await scope.getByRole('button', { name: `Masukkan ke ${groups[item.group]}` }).click({ force: true, timeout: 3000 });
@@ -143,12 +189,15 @@ async function answerTouch(page, q) {
     return true;
   }
   if (q.type === 'order') {
+    // the classic tiles, or a subject game's own pieces (Garis Masa, Bina Empayar...): tap each in order
     await beat(700);
     for (const item of q.items) {
-      await scope.locator('button.tile').filter({ hasText: new RegExp(`^${escape(item.text)}$`) }).first().click();
+      const tile = scope.locator('button.tile').filter({ hasText: new RegExp(`^${escape(item.text)}$`) });
+      const btn = (await tile.count()) ? tile.first() : scope.getByRole('button', { name: item.text, exact: true }).first();
+      await btn.click({ force: true, timeout: 2500 }).catch(() => {});
       await beat();
     }
-    await scope.getByRole('button', { name: /Hantar/ }).click();
+    await scope.getByRole('button', { name: /^(Hantar|Semak)/ }).first().click({ timeout: 2500 }).catch(() => {});
     return true;
   }
   return false;

@@ -4,7 +4,7 @@ const fs = require('fs');
 const { launch } = require('./lib.cjs');
 const S = require('./session.cjs');
 const OUT = process.argv[2];
-const QUIZ = 12;
+const QUIZ = Number(process.env.DIDIK_QUIZ || 21);
 const DENY = /skrin penuh|bunyi|Keluar|Rehat|Tamat|Seterusnya$|Bacakan|Dengar|^\s*$/i;
 const modes = process.argv.slice(3);
 
