@@ -10,7 +10,8 @@ const { Stage } = require('./stage.cjs');
 const S = require('./session.cjs');
 
 const [playerKind = 'host', maxArg = '300', outDir, untilArg = '1', hostArg = '1'] = process.argv.slice(2);
-const MAX = Number(maxArg) * 1000;
+const K = Number(process.env.TIME_WARP || 1); // see stage.cjs: the page runs K× slower, so the player does too
+const MAX = Number(maxArg) * 1000 * K;
 const UNTIL_CLEAR = untilArg === '1';
 const HOST_TOO = hostArg === '1';
 const QUIZ = Number(process.env.DIDIK_QUIZ || 21);
@@ -34,6 +35,11 @@ const tag = playerKind === 'phone' ? 'phone_9x16' : 'player_1080p';
   } else {
     host = await S.hostPage(parent, room.code);
   }
+  if (K > 1) {
+    const wait = kid.page.waitForTimeout.bind(kid.page);
+    kid.page.waitForTimeout = (ms) => wait(ms * K);
+  }
+  await kid.warpAnimations();
   const { page } = await S.joinPlayer(browser, room.slug, 'Aina', 'Arnab', undefined, kid.page);
   await S.submitJoin(page);
   await host.waitForTimeout(800);
@@ -44,8 +50,14 @@ const tag = playerKind === 'phone' ? 'phone_9x16' : 'player_1080p';
   await page.waitForTimeout(1200);
   await S.start(host);
 
+  // HOST_BLANK=1: the hidden host page (no recording) renders the same heavy scenes and takes CPU from the
+  // recorded window; once the run has started the server drives it, so the host page can go idle
+  if (process.env.HOST_BLANK === '1' && !HOST_TOO) {
+    await page.waitForTimeout(2500);
+    await host.goto('about:blank').catch(() => {});
+  }
   const log = [];
-  const note = (s) => { log.push(`${((Date.now() - t0) / 1000).toFixed(1)}s ${s}`); };
+  const note = (s) => { log.push(`${((Date.now() - t0) / 1000 / K).toFixed(1)}s ${s}`); };
   let shownSince = 0;
   let cleared = 0;
   let clearedAt = 0;
@@ -82,14 +94,14 @@ const tag = playerKind === 'phone' ? 'phone_9x16' : 'player_1080p';
     const nextWorld = page.getByRole('button', { name: /Dunia seterusnya|Penamat/ });
     if (await nextWorld.isVisible().catch(() => false)) {
       if (!clearedAt) { clearedAt = Date.now(); cleared++; note('dunia selesai'); }
-      if (UNTIL_CLEAR && Date.now() - clearedAt > 5000) break;
-      if (!UNTIL_CLEAR && Date.now() - clearedAt > 4000) { await nextWorld.click(); clearedAt = 0; }
+      if (UNTIL_CLEAR && Date.now() - clearedAt > 5000 * K) break;
+      if (!UNTIL_CLEAR && Date.now() - clearedAt > 4000 * K) { await nextWorld.click(); clearedAt = 0; }
     }
     // cinematics and toasts: let them play, then Teruskan / Lawan!
     const go = page.getByRole('button', { name: /^(Teruskan|Lawan!)/ }).first();
     if (await go.isVisible().catch(() => false)) {
       if (!shownSince) shownSince = Date.now();
-      if (Date.now() - shownSince > 2600) {
+      if (Date.now() - shownSince > 2600 * K) {
         await go.click().catch(() => {});
         note((await go.innerText().catch(() => '?')).trim());
         shownSince = 0;
@@ -99,9 +111,10 @@ const tag = playerKind === 'phone' ? 'phone_9x16' : 'player_1080p';
     }
     await page.waitForTimeout(200);
   }
+  const fps = await page.evaluate(() => window.__fps || null).catch(() => null);
   const results = [await kid.stop()];
   if (hostStage) results.push(await hostStage.stop());
-  fs.writeFileSync(path.join(outDir, `legenda_${tag}.json`), JSON.stringify({ room: room.code, cleared, log, results }, null, 2));
+  fs.writeFileSync(path.join(outDir, `legenda_${tag}.json`), JSON.stringify({ room: room.code, cleared, log, results, fps }, null, 2));
   console.log(JSON.stringify({ cleared, results, last: log.slice(-6) }));
   await kid.close();
   if (hostStage) await hostStage.close();

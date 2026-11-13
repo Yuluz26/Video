@@ -11,7 +11,16 @@ const SIZES = {
   phone: { w: 1080, h: 1920, scale: 8 / 3, mobile: true }, // 405×720 CSS, a phone
 };
 
+// PHONE_SCALE=2 renders the same 405×720 phone at 810×1440: fewer pixels for scenes too heavy for a GPU-less
+// machine to paint at 30 fps (Hikayat's boss fights); the clip is scaled to 1080×1920 afterwards
+if (process.env.PHONE_SCALE) {
+  const k = Number(process.env.PHONE_SCALE);
+  Object.assign(SIZES.phone, { w: Math.round(405 * k), h: Math.round(720 * k), scale: k });
+}
+
 let nextDisplay = 90 + (process.pid % 7) * 10;
+
+const WARP = Number(process.env.TIME_WARP || 1);
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -62,6 +71,44 @@ class Stage {
       };
       Document.prototype.exitFullscreen = function () { return Promise.resolve(); };
     });
+    // FPS_LOG=1: count the page's own animation frames per second, to tell app jank from capture jank
+    if (process.env.FPS_LOG === '1') {
+      await this.context.addInitScript(() => {
+        window.__fps = [];
+        let n = 0;
+        let t0 = performance.now();
+        const tick = (now) => {
+          n++;
+          if (now - t0 >= 1000) { window.__fps.push(Math.round((n * 1000) / (now - t0))); n = 0; t0 = now; }
+          requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }
+    // TIME_WARP=K: the page lives K times slower (its clock, animation frames, timers, CSS/Web animations
+    // and videos), and the recording is sped back up K times in stop(). A GPU-less machine cannot paint
+    // Hikayat's boss fights at 30 fps in real time; slowed down it paints every frame, so the clip plays
+    // at the game's true speed and smoothness. The server is left on real time (it only waits on answers).
+    if (WARP > 1) {
+      await this.context.addInitScript((K) => {
+        const realNow = performance.now.bind(performance);
+        const t0 = realNow();
+        const now = () => t0 + (realNow() - t0) / K;
+        performance.now = now;
+        const raf = window.requestAnimationFrame.bind(window);
+        window.requestAnimationFrame = (cb) => raf(() => cb(now()));
+        const st = window.setTimeout.bind(window);
+        const si = window.setInterval.bind(window);
+        window.setTimeout = (fn, ms = 0, ...a) => st(fn, (Number(ms) || 0) * K, ...a);
+        window.setInterval = (fn, ms = 0, ...a) => si(fn, (Number(ms) || 0) * K, ...a);
+        const slow = (m) => { try { m.defaultPlaybackRate = 1 / K; m.playbackRate = 1 / K; } catch {} };
+        const play = HTMLMediaElement.prototype.play;
+        HTMLMediaElement.prototype.play = function (...a) { slow(this); return play.apply(this, a); };
+        for (const ev of ['loadedmetadata', 'play', 'playing', 'ratechange']) {
+          document.addEventListener(ev, (e) => { if (e.target instanceof HTMLMediaElement && e.target.playbackRate !== 1 / K) slow(e.target); }, true);
+        }
+      }, WARP);
+    }
     this.page = this.context.pages()[0] || (await this.context.newPage());
     this.offset = mobile ? await this.findPage() : { x: 0, y: 0 };
     return this;
@@ -78,6 +125,17 @@ class Stage {
     while (y * 3 < raw.length && !(raw[y * 3] > 240 && raw[y * 3 + 1] < 20 && raw[y * 3 + 2] > 240)) y++;
     if (y * 3 >= raw.length) throw new Error('page not found on display');
     return { x: 0, y };
+  }
+
+  // With TIME_WARP, CSS transitions/animations and the Web Animations API follow the slowed clock too.
+  // The rate belongs to the document, so it is set again after every navigation.
+  async warpAnimations(page = this.page) {
+    if (WARP <= 1) return;
+    const cdp = await this.context.newCDPSession(page);
+    const apply = () => cdp.send('Animation.enable').then(() => cdp.send('Animation.setPlaybackRate', { playbackRate: 1 / WARP })).catch(() => {});
+    await apply();
+    page.on('load', apply);
+    page.on('domcontentloaded', apply);
   }
 
   // Starts recording the whole display (only the kiosk page is on it). Returns when ffmpeg is capturing.
@@ -100,8 +158,16 @@ class Stage {
     const fallback = setTimeout(() => ff.kill('SIGINT'), 5000);
     await done;
     clearTimeout(fallback);
-    const seconds = (Date.now() - this.started) / 1000;
+    let seconds = (Date.now() - this.started) / 1000;
     this.ff = null;
+    if (WARP > 1) {
+      // back to real speed: keep every WARP-th frame of the slowed take
+      const slowFile = this.file.replace(/\.mp4$/, `_x${WARP}.mp4`);
+      fs.renameSync(this.file, slowFile);
+      require('child_process').execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', slowFile, '-vf', `setpts=PTS/${WARP},fps=30`,
+        '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '14', '-pix_fmt', 'yuv420p', this.file]);
+      seconds /= WARP;
+    }
     return { file: this.file, seconds: +seconds.toFixed(2) };
   }
 
