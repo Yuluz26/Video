@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ms" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<script src="./gsap.min.js"></script>
+<style>
+  @font-face { font-family: 'JetBrains Mono'; src: url('./jbm-400.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'JetBrains Mono'; src: url('./jbm-700.woff2') format('woff2'); font-weight: 700; }
+  :root { --bg: #090b11; --panel: #0e1119; --edge: #1b2130; --ink: #c9d3e3; --dim: #4c566a; --sun: #ffb627; --berry: #ff8fc8;
+          --sea: #7fe3d6; --sky: #8fb8ff; --leaf: #a8e07a; --coral: #ff7a66; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--bg); }
+  #root { position: relative; width: 100%; height: 100%; font-family: 'JetBrains Mono', monospace; color: var(--ink); }
+  .bar { position: absolute; left: 0; right: 0; top: 0; height: 110px; background: var(--panel); border-bottom: 1px solid var(--edge);
+         display: flex; align-items: center; padding: 0 36px; gap: 14px; font-size: 24px; color: var(--dim); }
+  .dot { width: 22px; height: 22px; border-radius: 50%; }
+  .path { margin-left: 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .path b { color: var(--ink); font-weight: 400; }
+  .tabs { position: absolute; left: 0; right: 0; top: 110px; height: 72px; display: flex; background: #0b0e15; border-bottom: 1px solid var(--edge); overflow: hidden; }
+  .tab { padding: 0 30px; display: flex; align-items: center; font-size: 22px; color: var(--dim); border-right: 1px solid var(--edge); white-space: nowrap; }
+  .tab.on { color: var(--ink); background: var(--bg); box-shadow: inset 0 3px 0 var(--sun); }
+  .editor { position: absolute; left: 0; right: 0; top: 182px; bottom: 470px; overflow: hidden; }
+  .code { position: absolute; left: 0; right: 70px; top: 18px; font-size: 29px; line-height: 50px; tab-size: 4; }
+  .ln { display: flex; white-space: pre; height: 50px; }
+  .ln.cur { background: rgba(255,182,39,.06); }
+  .no { width: 96px; flex: none; text-align: right; padding-right: 28px; color: #2f3646; }
+  .ln.cur .no { color: var(--sun); }
+  .cursor { display: inline-block; width: 3px; height: 38px; margin-bottom: -8px; background: var(--sun); box-shadow: 0 0 14px var(--sun); }
+  .mini { position: absolute; right: 18px; top: 24px; width: 40px; bottom: 24px; opacity: .55; }
+  .mini i { display: block; height: 4px; margin: 0 0 4px; border-radius: 2px; }
+  .status { position: absolute; left: 0; right: 0; bottom: 420px; height: 50px; background: #121725; border-top: 1px solid var(--edge);
+            display: flex; align-items: center; padding: 0 30px; gap: 34px; font-size: 20px; color: var(--dim); }
+  .status .count { margin-left: auto; color: var(--sun); }
+  .term { position: absolute; left: 0; right: 0; bottom: 0; height: 420px; background: #07080d; border-top: 1px solid var(--edge);
+          padding: 26px 36px; font-size: 27px; line-height: 44px; white-space: pre; overflow: hidden; }
+  .term .p { color: var(--leaf); }
+  .k { color: var(--berry); } .s { color: var(--sun); } .n { color: var(--sea); } .c { color: #5c6577; font-style: italic; }
+  .f { color: var(--sky); } .d { color: var(--coral); }
+  .ok { color: var(--leaf); } .pass { color: #3ddc84; font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="ide-a" data-start="0" data-duration="13.79" data-width="1080" data-height="1920">
+  <div class="bar"><span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span><span class="path" id="path"></span></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="editor"><div class="code" id="code"></div><div class="mini" id="mini"></div></div>
+  <div class="status"><span>⎇ main</span><span id="lang">Python</span><span id="pos"></span><span class="count" id="count"></span></div>
+  <div class="term" id="term"></div>
+</div>
+<script>
+const D = {"duration":13.79,"segments":[{"from":0,"to":6.69,"file":"live/server/didik_live/game/modes/fishing.py","lang":"py","firstLine":1,"base":["\"\"\"Pancing Ikan: a right answer is bait (three in a row, golden bait). Cast the line into the lake and","see what bites, from a bilis to the rare golden arowana. Golden bait never brings up an old boot and","makes the big fish likelier. The score is the worth of everything caught.","\"\"\"","","from __future__ import annotations","","from typing import Any","","from ...questions import Outcome","from .base import Seat","from .collect import CollectMode",""],"typed":["# name, points, how often it bites (and how often with golden bait)","FISH = {","    \"kasut\": {\"name\": \"Kasut buruk\", \"value\": 0, \"odds\": 6, \"gold\": 0},","    \"bilis\": {\"name\": \"Ikan Bilis\", \"value\": 5, \"odds\": 30, \"gold\": 10},","    \"puyu\": {\"name\": \"Ikan Puyu\", \"value\": 10, \"odds\": 25, \"gold\": 14},","    \"keli\": {\"name\": \"Ikan Keli\", \"value\": 15, \"odds\": 18, \"gold\": 18},","    \"patin\": {\"name\": \"Ikan Patin\", \"value\": 25, \"odds\": 12, \"gold\": 22},","    \"kelah\": {\"name\": \"Ikan Kelah\", \"value\": 40, \"odds\": 6, \"gold\": 22},","    \"arowana\": {\"name\": \"Arowana Emas\", \"value\": 80, \"odds\": 2, \"gold\": 12},","}","NET = 8  # the latest catches a child sees in their bucket"],"typeFrom":1,"cps":50},{"from":6.69,"to":9.47,"file":"live/server/didik_live/game/modes/legenda.py","lang":"py","firstLine":38,"base":["","import asyncio","import logging","import time","from typing import Any, ClassVar","","from ...questions import Outcome","from .base import Seat, SelfPacedMode","","log = logging.getLogger(\"didik.legenda\")",""],"typed":["HEARTS = 12","HEAL = 1","HURT = 3","ENCOUNTERS = 5","BOSS_BARS = 5","ELEMENTS = (\"api\", \"angin\", \"petir\", \"tanah\", \"air\")","HEROES = (\"tuah\", \"mahsuri\")","# How long children wait at the boss gate for friends, and how long a boss round stays open.","GATHER_SECONDS = 60.0","ROUND_SECONDS = 45.0","# Steps where the browser plays a cinematic and then sends `next`.","CINEMATIC = (\"intro\", \"travel\", \"encounter\", \"clear\", \"unlock\", \"reveal\", \"worldclear\")"],"typeFrom":6.85,"cps":78}],"flips":[{"at":9.47,"file":"live/server/didik_live/game/modes/race.py","lang":"py","lines":["\"\"\"Lumba Sampan: everyone answers the same question; right and fast moves your boat furthest.","","A wrong answer still paddles a little, so nobody is left far behind, and once or twice a race the","rapids carry every boat forward together.","\"\"\"","","from __future__ import annotations","","from typing import Any","","from .base import Answered, SyncMode","","STEP = 100  # metres for a perfect answer","","","class RaceMode(SyncMode):","    key = \"lumba\"","    title = \"Lumba Sampan\"","    tagline = \"Jawab betul dan pantas, sampan kamu meluncur ke garisan penamat.\"","    how = \"Semua jawab soalan yang sama. Betul dan laju = sampan maju jauh. Salah pun tetap maju sikit.\"","    style = \"Serentak\"","    world = \"sungai\"","    unit = \"m\"","    saved = (\"rapids_at\", \"rapids_now\", \"length\")","","    def setup(self) -> None:","        count = len(self.questions)","        candidates = list(range(1, count - 1))","        self.rng.shuffle(candidates)","        self.rapids_at = sorted(candidates[: 1 if count < 8 else 2])","        self.rapids_now = False","        self.length = count * STEP + len(self.rapids_at) * 25","","    def points_for(self, player: Any, record: Answered | None, limit: float) -> int:","        if record is None:","            return 6","        if record.outcome.correct:","            speed = max(0.0, 1 - record.elapsed / max(limit, 1))","            streak = min(max(self.streaks.get(player.id, 0) - 1, 0), 2) * 10","            return round(60 + 40 * speed) + streak","        if record.outcome.fraction > 0:","            return round(60 * record.outcome.fraction)","        return 12","","    def on_question(self) -> None:","        self.rapids_now = False","","    def on_reveal(self) -> None:","        if self.index in self.rapids_at:","            self.rapids_now = True","            for player in self.players():","                player.score += 25","                self.gained[player.id] = self.gained.get(player.id, 0) + 25","            self.room.feed(\"Arus deras! Semua sampan meluncur ke depan.\", \"rapids\")","            self.room.fx({\"kind\": \"rapids\"})","","    def add_player(self, player: Any) -> None:","        # A late joiner starts level with the slowest boat, not at the start line.","        others = [p.score for p in self.players() if p.id != player.id]","        player.score = min(others) if others else 0"]},{"at":9.94,"file":"live/server/didik_live/game/modes/jump.py","lang":"py","lines":["\"\"\"Lompat!: our answer to ZEP's OX quiz. Answers are islands in a pond; every child hops their animal","onto one and can change their mind until time runs out. Then the wrong islands sink.","","Falling in costs a heart, never the game: a child with no hearts left becomes a fish who keeps","answering, and two right answers in a row put them back on land.","\"\"\"","","from __future__ import annotations","","import time","from typing import Any","","from .base import Answered, SyncMode","","HEARTS = 3","","","class JumpMode(SyncMode):","    key = \"lompat\"","    title = \"Lompat!\"","    tagline = \"Lompat ke pulau jawapan sebelum masa tamat. Pulau yang salah tenggelam!\"","    how = \"Ketik pulau jawapan. Kamu boleh tukar sebelum masa tamat. Salah = jatuh ke air dan hilang satu hati.\"","    style = \"Serentak\"","    world = \"kolam\"","    needs = \"Betul/Salah atau pilihan 2 hingga 4\"","    min_questions = 3","    standings_seconds = 0.0","    saved = (\"hearts\", \"fish_run\", \"picks\", \"fell\", \"revived\")","","    @classmethod","    def accepts(cls, question: Any) -> bool:","        return question.type == \"truefalse\" or (question.type == \"single\" and 2 <= len(question.choices) <= 4)","","    def setup(self) -> None:","        self.hearts: dict[str, int] = {}","        self.fish_run: dict[str, int] = {}","        self.picks: dict[str, str] = {}","        self.fell: list[str] = []","        self.revived: list[str] = []","","    def hearts_of(self, player_id: str) -> int:","        return self.hearts.setdefault(player_id, HEARTS)","","    def pads(self) -> list[dict[str, str]]:","        if self.pres is None:","            return []","        if self.pres.type == \"truefalse\":","            return [{\"id\": \"true\", \"text\": \"Betul\"}, {\"id\": \"false\", \"text\": \"Salah\"}]","        return [{\"id\": c[\"id\"], \"text\": c[\"text\"]} for c in self.pres.public[\"choices\"]]","","    def on_question(self) -> None:","        self.picks = {}","        self.fell = []","        self.revived = []","","    def all_answered(self) -> bool:","        return False  # children may still change islands; act_pick shortens the clock instead","","    def handle(self, player: Any, kind: str, data: dict[str, Any]) -> None:","        if kind in (\"pick\", \"answer\"):"]},{"at":10.43,"file":"live/web/src/lib/games/legenda/Stage.svelte","lang":"ts","lines":["<!--","\tThe battlefield: the world's painting (the hero's path on the left, the boss's arena on the right, the","\ttitle plate and minimap as painted), with the live parts laid over it in the same places: six hearts, the","\tboss's name and five bars, and the five elements. The hero, the boss and the two small enemies are","\tseparate layers cut from the painting, so they can act while the scene stays still.","","\tThe scene shows the painting's 16:9 window that its living version fills (sceneArt: the water, mist and boss","\tmoving, steadied on the painting), full frame; the still painting is the fallback. Everyone stands in the","\tpainting's own places, so the video lines up with them. While the boss is struck or strikes, the living","\tscene fades to the still painting and the masked boss acts in its place, then the scene comes back to life.","","\tPoses are separate drawings (static/story/), switched on cue and moved with the Web Animations API:","\tan attack is a wind-up, the element flying across the scene, its burst and 12-frame impact on the","\ttarget, a flash and a shake; a counterattack is the enemy's lunge and strike on the hero. The HUD shows","\tthe server's hearts and boss bars, but holds the old number until the hit in the animation lands.","-->","<script lang=\"ts\">","\timport { onMount } from 'svelte';","\timport Particles from './Particles.svelte';","\timport { keepPlaying } from './livevideo';","\timport { sceneSource } from './scenes';","\timport {","\t\tELEMENTS,","\t\tELEMENT_NAME,","\t\tELEMENT_TINT,","\t\tWORLD_ART,","\t\tbattleBg,","\t\tbossArt,","\t\tsceneArt,","\t\tsceneAr,","\t\tview,","\t\telementIcon,","\t\tfield,","\t\tFX_ANCHOR,","\t\tfxSlash,","\t\tfxStill,","\t\theartIcons,","\t\theroArt,","\t\theroWeaponArt,","\t\tARMED_POSES,","\t\tminionArt,","\t\treducedMotion,","\t\tsleep,","\t\tsymbol,","\t\ttype Element,","\t\ttype Pose,","\t\tstoryArt","\t} from './data';","","","\tlet {","\t\tworld,","\t\thero,","\t\theroName = '',","\t\thearts,","\t\tmaxHearts = 12,","\t\tfoe = null,","\t\tboss = null,","\t\tenemy = 'idle',","\t\tmode = 'battle',"]},{"at":10.91,"file":"live/web/src/lib/room.svelte.ts","lang":"ts","lines":["// One live connection to a room, for a host screen or a child's device. Reconnects on its own;","// a child's device keeps a token per room so a dropped connection or a reload keeps their place.","","import type { Person, View } from './types';","","export interface Fx {","\tt: 'fx';","\tkind: string;","\t// eslint-disable-next-line @typescript-eslint/no-explicit-any","\t[key: string]: any;","}","","type Status = 'idle' | 'connecting' | 'open' | 'reconnecting' | 'ended';","","/** What a child picks on the join screen: a nickname, an animal hood, a colour and a skin tone. */","export interface JoinData {","\tname: string;","\tavatar: string;","\tcolour: string;","\tskin: string;","}","","const TOKEN_PREFIX = 'didik-live:token:';","","function storage(): Storage | null {","\ttry {","\t\treturn window.localStorage;","\t} catch {","\t\treturn null;","\t}","}","","export function savedToken(key: string): string | null {","\treturn storage()?.getItem(TOKEN_PREFIX + key.toLowerCase()) ?? null;","}","","export class RoomClient {","\tview = $state<View | null>(null);","\troster = $state<Person[]>([]);","\tstatus = $state<Status>('idle');","\t/** A final message: the room closed, the child was removed, the link is wrong. */","\tnotice = $state<string | null>(null);","\t/** A passing message, e.g. a refused action. Clears itself. */","\terror = $state<string | null>(null);","\tyouId = $state<string | null>(null);","\t/** True when a child must pick an avatar and name before joining. */","\tneedsJoin = $state(false);","\tjoining = $state(false);","","\t/** Server time minus local time, for countdowns that agree on every device. */","\toffset = 0;","\t/** Hutan Misteri positions, kept outside reactivity and drawn every frame. */","\tpositions = new Map<string, { x: number; y: number; f: number }>();","","\tprivate ws: WebSocket | null = null;","\tprivate fxListeners = new Set<(fx: Fx) => void>();","\tprivate posListeners = new Set<() => void>();","\tprivate attempts = 0;","\tprivate stopped = false;","\tprivate joinData: JoinData | null = null;"]},{"at":11.42,"file":"live/web/src/lib/sound.ts","lang":"ts","lines":["// Every sound is synthesised with the Web Audio API, in the chiptune style of the pictures: no audio files","// to download, nothing to license, and it works offline. Browsers only allow sound after a tap, so `unlock()` runs on the first one.","","type Wave = OscillatorType;","","let ctx: AudioContext | null = null;","let master: GainNode | null = null;","let muted = read();","const listeners = new Set<(muted: boolean) => void>();","","function read(): boolean {","\ttry {","\t\treturn localStorage.getItem('didik-live:muted') === '1';","\t} catch {","\t\treturn false;","\t}","}","","export function unlock(): void {","\tif (typeof window === 'undefined') return;","\tif (!ctx) {","\t\tconst Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;","\t\tif (!Ctor) return;","\t\tctx = new Ctor();","\t\tmaster = ctx.createGain();","\t\tmaster.gain.value = 0.55;","\t\tmaster.connect(ctx.destination);","\t}","\tif (ctx.state === 'suspended') void ctx.resume();","}","","export function isMuted(): boolean {","\treturn muted;","}","","export function setMuted(value: boolean): void {","\tmuted = value;","\ttry {","\t\tlocalStorage.setItem('didik-live:muted', value ? '1' : '0');","\t} catch {","\t\t/* private mode: the choice lasts for this visit */","\t}","\tlisteners.forEach((fn) => fn(value));","}","","export function onMuteChange(fn: (muted: boolean) => void): () => void {","\tlisteners.add(fn);","\treturn () => listeners.delete(fn);","}","","// The sounds are chiptune: square and triangle voices that start at once and stop short, pitch","// slides that climb in steps of a semitone, and noise that crunches (random values held for a few","// samples) instead of hissing. A square wave carries more energy than a sine, so it is turned down.","const SQUARE = 0.55;","","function semitones(freq: number, to: number, steps: number): number[] {","\tconst from = Math.round(12 * Math.log2(freq / 440));","\tconst end = Math.round(12 * Math.log2(to / 440));","\treturn Array.from({ length: steps }, (_, i) => 440 * 2 ** ((from + Math.round(((end - from) * i) / Math.max(1, steps - 1))) / 12));","}"]},{"at":11.91,"file":"live/server/didik_live/questions.py","lang":"py","lines":["\"\"\"The sixteen question types a parent can write, and how each one is shown, answered and checked.","","A question reaches a child only as a *presentation*: a copy with the answers removed, the options","shuffled and every option renamed with a random token. The tokens map back to the real ids only on the","server, so nothing in the browser (not even option order or ids) reveals the answer before it is checked.","(A jigsaw is the one exception by nature: the picture on each piece is where it goes.)","","Every question may have a picture (a 3D sticker, beside or instead of an uploaded image) and an","explanation. The explanation reaches the browser only with the answer (`reveal`), to be shown to a child","who did not get it right.","\"\"\"","","from __future__ import annotations","","import random","import re","import secrets","from dataclasses import dataclass, field","from typing import Annotated, Any, Literal, Union","","from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator","","from . import text as textutil","from .stickers import PLACES, check_sticker","","ID_PATTERN = r\"^[A-Za-z0-9_-]{1,16}$\"","IMAGE_PATTERN = re.compile(r\"^/uploads/[a-f0-9]{32}\\.webp$\")","BLANK_PATTERN = re.compile(r\"\\[([^\\[\\]]{1,40})\\]\")","MAX_QUESTIONS = 60","","TYPE_LABELS = {","    \"single\": \"Pilihan tunggal\",","    \"multiple\": \"Pilih semua yang betul\",","    \"truefalse\": \"Betul atau salah\",","    \"text\": \"Taip jawapan\",","    \"number\": \"Nombor\",","    \"order\": \"Susun turutan\",","    \"match\": \"Padankan\",","    \"blank\": \"Isi tempat kosong\",","    \"count\": \"Kira dan masukkan\",","    \"spell\": \"Susun huruf\",","    \"sort\": \"Isih kumpulan\",","    \"missing\": \"Huruf hilang\",","    \"puzzle\": \"Cantum gambar\",","    \"blocks\": \"Bina nombor\",","    \"clock\": \"Laraskan jam\",","    \"money\": \"Bayar dengan wang\",","}","","# Letters a \"Susun huruf\" word may use: Malay and English words, written with or without capitals.","WORD_PATTERN = re.compile(r\"^[A-Za-z]{2,12}$\")","DECOY_LETTERS = \"abcdeghiklmnoprstuy\"","COUNT_MAX = 20","# Malaysian money in sen: the coins, then the notes, as a child pays with them.","MONEY = (5, 10, 20, 50, 100, 500, 1000, 5000)","MONEY_MAX = 10000","PLACES_NAMES = (\"ratus\", \"puluh\", \"sa\")","","","def new_id() -> str:"]},{"at":12.4,"file":"live/web/src/lib/games/legenda/LegendaPlayer.svelte","lang":"ts","lines":["<!--","\tA child's screen in Legenda Story Mode. The server's step (game.seat.step) chooses what is shown;","\tthis screen only plays the cinematic for that step and sends `next` when it ends (or when the child","\ttaps Teruskan), naming the step's `ev` so a double tap never skips one.","","\tNothing here walks or dodges. The child chooses a hero, reads, answers, picks an element at the","\tboss, and watches: the attack or the counterattack plays only once the server has checked the answer.","","\tAfter the hero is chosen the whole screen is the game (`.arena`, fixed, with the browser's full screen","\tasked for at the tap that chooses the hero). The question is a popup over the scene, never a panel","\tbeside it; while the attack or counterattack plays the popup steps aside so the fight can be seen, and","\ta wrong answer brings it back with the right answer shown.","-->","<script lang=\"ts\">","\timport { onMount, tick } from 'svelte';","\timport { fade } from 'svelte/transition';","\timport type { RoomClient } from '$lib/room.svelte';","\timport type { Me, Person } from '$lib/types';","\timport { confetti } from '$lib/confetti';","\timport Answer from '$lib/questions/Answer.svelte';","\timport Explain from '$lib/questions/Explain.svelte';","\timport QuestionCard from '$lib/questions/QuestionCard.svelte';","\timport FullscreenToggle from '$ui/FullscreenToggle.svelte';","\timport Hud from '../Hud.svelte';","\timport Icon from '$ui/Icon.svelte';","\timport SoundToggle from '$ui/SoundToggle.svelte';","\timport Banner from './Banner.svelte';","\timport { BANNERS } from './banners';","\timport HeroSelect from './HeroSelect.svelte';","\timport Stage from './Stage.svelte';","\timport {","\t\tELEMENTS,","\t\tELEMENT_NAME,","\t\tHEROES,","\t\telementIcon,","\t\telementUrls,","\t\theartIcons,","\t\theartsText,","\t\theroArt,","\t\tpreload,","\t\tsleep,","\t\treducedMotion,","\t\tsymbol,","\t\tworldUrls,","\t\tbattleBg,","\t\tsceneArt,","\t\tsceneAr,","\t\tsceneSound,","\t\tsceneStill,","\t\tintroArt,","\t\tintroFlip,","\t\theroWeaponArt,","\t\tWORLD_ART,","\t\tbossArt,","\t\ttype Element,","\t\tstoryArt","\t} from './data';","\timport { sfx, sound } from './sfx';","\timport { keepPlaying } from './livevideo';","\timport { sceneSource, warmScenes } from './scenes';"]}],"flipsEnd":12.89,"command":{"at":12.95,"text":"npm run build && didik-live","cps":48},"terminal":["$ didik-live","","  DIDIK Main Bersama","  Buka:  http://localhost:8080",""],"totalLines":49552};
+const KW = /^(def|class|return|if|elif|else|for|in|not|and|or|is|None|True|False|import|from|as|with|async|await|const|let|export|function|type|new|this|lambda|raise|try|except|pass|while|break|continue|interface|extends)$/;
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function hl(line, lang) {
+  const re = /(#.*$|\/\/.*$)|("""[^"]*"""?|"(?:[^"\\]|\\.)*"?|'(?:[^'\\]|\\.)*'?|`[^`]*`?)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()|([A-Za-z_][A-Za-z0-9_]*)|(@\w+)/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(line))) {
+    out += esc(line.slice(last, m.index));
+    const [tok, com, str, num, fn, word, dec] = m;
+    if (com && (lang === 'py' ? com.startsWith('#') : com.startsWith('//'))) out += '<span class="c">' + esc(tok) + '</span>';
+    else if (com) out += esc(tok);
+    else if (str) out += '<span class="s">' + esc(tok) + '</span>';
+    else if (num) out += '<span class="n">' + tok + '</span>';
+    else if (fn) out += KW.test(fn) ? '<span class="k">' + fn + '</span>' : '<span class="f">' + fn + '</span>';
+    else if (word) out += KW.test(word) ? '<span class="k">' + word + '</span>' : esc(word);
+    else if (dec) out += '<span class="d">' + tok + '</span>';
+    last = m.index + tok.length;
+  }
+  return out + esc(line.slice(last));
+}
+const el = (id) => document.getElementById(id);
+const short = (f) => f.split('/').pop();
+function header(file, lang, open) {
+  const parts = file.split('/');
+  el('path').innerHTML = '~/didik/' + parts.slice(0, -1).join('/') + '/<b>' + parts.at(-1) + '</b>';
+  el('tabs').innerHTML = open.map((f) => '<div class="tab' + (f === file ? ' on' : '') + '">' + short(f) + '</div>').join('');
+  el('lang').textContent = lang === 'py' ? 'Python' : file.endsWith('.svelte') ? 'Svelte' : 'TypeScript';
+}
+function drawCode(lines, firstLine, curLine, cursorCol, showCursor, scroll, lang) {
+  let html = '';
+  lines.forEach((l, i) => {
+    const cur = i === curLine;
+    const text = cur && cursorCol >= 0 ? l.slice(0, cursorCol) : l;
+    html += '<div class="ln' + (cur ? ' cur' : '') + '"><span class="no">' + (firstLine + i) + '</span><span>' + hl(text, lang) +
+      (cur && showCursor ? '<span class="cursor"></span>' : '') + '</span></div>';
+  });
+  el('code').innerHTML = html;
+  el('code').style.transform = 'translateY(' + (-scroll) + 'px)';
+  el('mini').innerHTML = lines.slice(0, 60).map((l) => '<i style="width:' + Math.min(40, l.trimEnd().length * 0.45) + 'px;margin-left:' + Math.min(14, (l.length - l.trimStart().length) * 0.6) + 'px;background:' + (l.trim().startsWith('#') || l.trim().startsWith('//') ? '#3a4152' : l.includes('"') || l.includes("'") ? '#7a6224' : '#2c3a55') + '"></i>').join('');
+}
+function typed(seg, t) {
+  // how far typing has got at t: [line index, column], or null before it starts
+  let left = (t - seg.typeFrom) * seg.cps;
+  if (left < 0) return null;
+  for (let i = 0; i < seg.typed.length; i++) {
+    const len = seg.typed[i].length + 1;
+    if (left < len) return [i, Math.floor(left)];
+    left -= len;
+  }
+  return [seg.typed.length - 1, seg.typed.at(-1).length, true];
+}
+const blink = (t) => Math.floor(t * 2.2) % 2 === 0;
+const term = (lines) => { el('term').innerHTML = lines.map((l) => l.startsWith('$') ? '<span class="p">$</span>' + esc(l.slice(1)) : l).join('\n'); };
+
+function renderA(t) {
+  const open = ['fishing.py', 'legenda.py'].map((n) => D.segments.find((s) => s.file.endsWith(n)).file);
+  const seg = D.segments.find((s) => t >= s.from && t < s.to);
+  if (seg) {
+    header(seg.file, seg.lang, open);
+    const p = typed(seg, t);
+    const shown = p ? seg.base.concat(seg.typed.slice(0, p[0] + 1)) : seg.base.concat(['']);
+    const cur = shown.length - 1;
+    const col = p ? (p[2] ? seg.typed[p[0]].length : p[1]) : 0;
+    const typing = p && !p[2];
+    const scroll = Math.max(0, (shown.length - 21) * 50);
+    drawCode(shown, seg.firstLine, cur, col, typing || blink(t), scroll, seg.lang);
+    el('pos').textContent = 'Ln ' + (seg.firstLine + cur) + ', Col ' + (col + 1);
+    el('count').textContent = '';
+    term(D.terminal);
+    return;
+  }
+  // file flips, scrolling, counter rolling
+  let f = D.flips[0];
+  for (const x of D.flips) if (t >= x.at) f = x;
+  header(f.file, f.lang, D.flips.map((x) => x.file).slice(0, D.flips.indexOf(f) + 1).slice(-4));
+  const u = Math.min(1, (t - D.flips[0].at) / (D.flipsEnd - D.flips[0].at));
+  const scroll = (t - f.at) * 900;
+  drawCode(f.lines, 1, -1, -1, false, scroll, f.lang);
+  el('pos').textContent = '';
+  el('count').textContent = Math.round(D.totalLines * (1 - Math.pow(1 - u, 3))).toLocaleString('en-US') + ' lines';
+  const c = D.command;
+  const n = Math.max(0, Math.min(c.text.length, Math.floor((t - c.at) * c.cps)));
+  term(D.terminal.concat(t >= c.at ? ['$ ' + c.text.slice(0, n) + (blink(t) || n < c.text.length ? '▍' : '')] : ['$ ' + (blink(t) ? '▍' : '')]));
+}
+
+function renderB(t) {
+  header(D.file, D.lang, ['legenda.py', 'test_legenda.py'].map((n) => n === 'legenda.py' ? 'live/server/didik_live/game/modes/legenda.py' : D.file));
+  drawCode(D.lines, 1, -1, -1, false, t * 500, D.lang);
+  el('count').textContent = '';
+  el('pos').textContent = '';
+  const c = D.command;
+  const n = Math.max(0, Math.min(c.text.length, Math.floor((t - c.at) * c.cps)));
+  const lines = ['$ ' + c.text.slice(0, n) + (t < D.dotsFrom ? '▍' : '')];
+  if (t >= D.dotsFrom) {
+    const k = Math.round(D.tests * Math.min(1, (t - D.dotsFrom) / (D.dotsTo - D.dotsFrom)));
+    const dots = '.'.repeat(k);
+    for (let i = 0; i < dots.length; i += 56) lines.push('<span class="ok">' + dots.slice(i, i + 56) + '</span>');
+  }
+  if (t >= D.summaryAt) lines.push('<span class="pass">' + esc(D.summary) + '</span>');
+  term(lines.slice(-8));
+}
+
+const render = renderA;
+const state = { t: 0 };
+const tl = gsap.timeline({ paused: true });
+tl.to(state, { t: D.duration, duration: D.duration, ease: 'none', onUpdate: () => render(state.t) }, 0);
+window.__timelines = window.__timelines || {};
+window.__timelines['ide-a'] = tl;
+render(0);
+tl.seek(0);
+</script>
+</body>
+</html>

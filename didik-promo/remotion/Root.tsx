@@ -6,6 +6,7 @@ import { Promo, PROMO_FRAMES } from './Promo';
 import { HYPE_FRAMES, PromoHype } from './PromoHype';
 import { PromoLandscape } from './PromoLandscape';
 import { Talk, TALK_FRAMES } from './Talk';
+import { Aura, AURA_FRAMES } from './Aura';
 import { FPS, loadFonts } from './theme';
 
 const fonts = delayRender('DIDIK fonts');
@@ -18,6 +19,7 @@ export const DidikRoot: React.FC = () => (
     <Composition id="DIDIK-Promo-16x9" component={PromoLandscape} durationInFrames={PROMO_FRAMES} fps={FPS} width={1920} height={1080} defaultProps={{ withAudio: true }} />
     <Composition id="DIDIK-Demo-16x9" component={Demo} durationInFrames={demoFrames()} fps={FPS} width={1920} height={1080} defaultProps={{ withAudio: true }} />
     <Composition id="DIDIK-Talk-9x16" component={Talk} durationInFrames={TALK_FRAMES} fps={FPS} width={1080} height={1920} />
+ <Composition id="DIDIK-Aura-9x16" component={Aura} durationInFrames={AURA_FRAMES} fps={FPS} width={1080} height={1920} />
     <Still id="DIDIK-Cover-9x16" component={Cover} width={1080} height={1920} />
   </>
 );

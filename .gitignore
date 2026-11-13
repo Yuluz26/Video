@@ -15,3 +15,8 @@ didik-promo/talk/src/
 didik-promo/talk/*.mp4
 didik-promo/talk/*.webm
 didik-promo/public/talk/
+didik-promo/aura/src/
+didik-promo/aura/hf/*/*.mp4
+didik-promo/aura/hf/*/gsap.min.js
+didik-promo/aura/hf/*/*.woff2
+didik-promo/public/aura/

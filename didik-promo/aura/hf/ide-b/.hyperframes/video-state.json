@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "historyId": "61a0d0fe-effb-4590-a7a8-0a482aab88ae",
+  "currentRevision": null,
+  "pendingChanges": false,
+  "files": {
+    "gsap.min.js": {
+      "hash": "92bb9a96476f983d212a2bc4f54c889039c1696dd4461d40a736860938570fbb",
+      "content": "/root/.cache/hyperframes/history/61a0d0fe-effb-4590-a7a8-0a482aab88ae/blobs/92/92bb9a96476f983d212a2bc4f54c889039c1696dd4461d40a736860938570fbb"
+    },
+    "hyperframes.json": {
+      "hash": "53dbce1e19aa713cbb12ee0bc4d206143b45ab15e6ffbfcaa8f69572d4d24d50",
+      "content": "/root/.cache/hyperframes/history/61a0d0fe-effb-4590-a7a8-0a482aab88ae/blobs/53/53dbce1e19aa713cbb12ee0bc4d206143b45ab15e6ffbfcaa8f69572d4d24d50"
+    },
+    "index.html": {
+      "hash": "84149a19d47c7c1f5f9258428045d9697e8cd96bbcef731eb0b62037704301fb",
+      "content": "/root/.cache/hyperframes/history/61a0d0fe-effb-4590-a7a8-0a482aab88ae/blobs/84/84149a19d47c7c1f5f9258428045d9697e8cd96bbcef731eb0b62037704301fb"
+    },
+    "jbm-400.woff2": {
+      "hash": "14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb",
+      "content": "/root/.cache/hyperframes/history/61a0d0fe-effb-4590-a7a8-0a482aab88ae/blobs/14/14425ba9c695763c1547f48a206b7aa60350a33ae23de09f0407877f3fcd89eb"
+    },
+    "jbm-700.woff2": {
+      "hash": "d0d4e818808f2a0ba39b2b09d1989366f63494e295f003c7ef436697378507e8",
+      "content": "/root/.cache/hyperframes/history/61a0d0fe-effb-4590-a7a8-0a482aab88ae/blobs/d0/d0d4e818808f2a0ba39b2b09d1989366f63494e295f003c7ef436697378507e8"
+    },
+    "meta.json": {
+      "hash": "a6b78758c219637f32245ea3adc3222833b1261322ef9c65ca26994dd59b8961",
+      "content": "/root/.cache/hyperframes/history/61a0d0fe-effb-4590-a7a8-0a482aab88ae/blobs/a6/a6b78758c219637f32245ea3adc3222833b1261322ef9c65ca26994dd59b8961"
+    }
+  },
+  "revisions": {},
+  "checks": {
+    "latest": null,
+    "revisions": {},
+    "unversioned": []
+  },
+  "snapshots": {
+    "latest": null,
+    "revisions": {},
+    "unversioned": []
+  },
+  "renders": {
+    "latest": {
+      "id": "518bf1aa-8f39-455b-a7b6-4a0c254f2302",
+      "completedAt": 1794584632782,
+      "output": "/home/user/Video/didik-promo/aura/hf/ide-b/ide-b.mp4",
+      "status": "completed",
+      "revision": null
+    },
+    "retainedRevisions": []
+  },
+  "pendingArtifactCleanup": []
+}
