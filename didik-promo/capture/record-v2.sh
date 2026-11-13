@@ -10,5 +10,6 @@ ROOM_SETTINGS='{"shuffle":false}' node record-game.cjs interaktif-islam 40 "$out
 TAG=b node record-game.cjs kampung 36 "$out" 2>&1 | cut -c1-260   # Ali opens the village (Lihat kampung)
 TAG=results HOST_END=1 node record-game.cjs lumba 22 "$out" 2>&1 | cut -c1-260
 node record-parent.cjs "$out" host_lobby 2>&1 | cut -c1-300
-node record-story.cjs host 300 "$out" 1 0 2>&1 | cut -c1-400
+# Hikayat's boss fights are too heavy to paint at 30 fps here without a GPU: record 6x slowed, sped back up
+TIME_WARP=6 HOST_BLANK=1 node record-story.cjs host 300 "$out" 1 0 2>&1 | cut -c1-400
 echo V2_DONE

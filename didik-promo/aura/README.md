@@ -4,7 +4,8 @@
 
 Every app shot is a v3 take of the latest DIDIK (revamped 8-bit 2D games, the new Kuiz Interaktif and
 subject games, the classroom lobby), recorded with `capture/record-v2.sh` into `recordings/raw-v3` and
-used as `public/clips/v3_*`. Makmal Sains is left out, as in every DIDIK video here.
+used as `public/clips/v3_*`. Hikayat Lima Alam is recorded with `TIME_WARP=6` (see `capture/stage.cjs`):
+the page runs six times slower and the take is sped back up, so the boss fight keeps every frame. Makmal Sains is left out, as in every DIDIK video here.
 
 - `beats.json`: beats and onsets of the song (librosa); the cuts and hits in `remotion/Aura.tsx` use them.
 - `hf/build.mjs`: builds two **HyperFrames** compositions (an editor and terminal typing real DIDIK source:

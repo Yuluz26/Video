@@ -234,12 +234,12 @@ const Drop: React.FC = () => {
       {/* the boss reveal, then the attack, both from the recorded run */}
       <Sequence durationInFrames={42} layout="none">
         <AbsoluteFill style={{ transform: `scale(${1.35 - 0.25 * p})` }}>
-          <Clip name="v3_legenda_player_1080p" from={f(88.3)} fit="cover" position="62% 50%" />
+          <Clip name="v3_legenda_smooth_player_1080p" from={f(85.35)} fit="cover" position="62% 50%" />
         </AbsoluteFill>
       </Sequence>
       <Sequence from={42} layout="none">
         <AbsoluteFill style={{ transform: `scale(${1.08 + interpolate(frame, [42, 82], [0, 0.08], clamp)})` }}>
-          <Clip name="v3_legenda_player_1080p" from={f(100.6)} fit="cover" position="45% 50%" />
+          <Clip name="v3_legenda_smooth_player_1080p" from={f(89.95)} fit="cover" position="92% 50%" />
         </AbsoluteFill>
       </Sequence>
       <AbsoluteFill style={{ background: 'linear-gradient(180deg, rgba(0,0,0,.7) 0%, rgba(0,0,0,0) 35%, rgba(0,0,0,0) 65%, rgba(0,0,0,.8) 100%)' }} />
